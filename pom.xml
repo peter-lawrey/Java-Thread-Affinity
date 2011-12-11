@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>vanilla.java</groupId>
+    <artifactId>affinity</artifactId>
+    <version>1.0</version>
+    <packaging>jar</packaging>
+
+    <properties>
+        <native.source.dir>src/main/c</native.source.dir>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>native-maven-plugin</artifactId>
+                <version>1.0-alpha-7</version>
+                <extensions>true</extensions>
+
+                <configuration>
+                    <javahClassNames>
+                        <javahClassName>vanilla.java.affinity.AffinitySupport</javahClassName>
+                    </javahClassNames>
+                    <javahSearchJNIFromDependencies>true</javahSearchJNIFromDependencies>
+                    <compilerStartOptions>
+                        <compilerStartOption>${commonCompilerOptions}</compilerStartOption>
+                    </compilerStartOptions>
+
+                    <sources>
+                        <source>
+                            <directory>${native.source.dir}</directory>
+                            <fileNames>
+                                <fileName>affinitysupport.c</fileName>
+                            </fileNames>
+                        </source>
+                        <source>
+                            <directory>${native.source.dir}/include</directory>
+                        </source>
+                        <source>
+                            <directory>target/native/javah</directory>
+                        </source>
+                        <source>
+                            <directory>/opt/java/openjdk/include/</directory>
+                        </source>
+                        <source>
+                            <directory>/opt/java/openjdk/include/linux/</directory>
+                        </source>
+                    </sources>
+
+                    <linkerStartOptions>
+                        <linkerStartOption>-shared</linkerStartOption>
+                    </linkerStartOptions>
+
+                </configuration>
+
+            </plugin>
+
+        </plugins>
+
+    </build>
+</project>
