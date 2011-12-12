@@ -2,7 +2,7 @@ package vanilla.java.affinity;
 
 public class AffinitySupport {
     public static final boolean LOADED;
-    private static final int FACTOR_BITS = 10;
+    private static final int FACTOR_BITS = 17;
     private static long RDTSC_FACTOR = 1 << FACTOR_BITS;
     private static long CPU_FREQUENCY = 1000;
     private static final long START;
@@ -34,8 +34,8 @@ public class AffinitySupport {
         while ((now = System.nanoTime()) < end) ;
         long end0 = rdtsc();
         end = now;
-        RDTSC_FACTOR = (end - start) << FACTOR_BITS / (end0 - start0);
-        CPU_FREQUENCY = (end0 - start0) * 1000 / (end - start) + 1;
+        RDTSC_FACTOR = ((end - start) << FACTOR_BITS) / (end0 - start0) - 1;
+        CPU_FREQUENCY = (end0 - start0 + 1) * 1000 / (end - start);
     }
 
     public native static long getAffinity();
@@ -44,11 +44,11 @@ public class AffinitySupport {
 
     public native static long rdtsc();
 
-    public long nanoTime() {
+    public static long nanoTime() {
         return LOADED ? tscToNano(rdtsc() - START) : System.nanoTime();
     }
 
-    public long tscToNano(long tsc) {
-        return tsc * RDTSC_FACTOR >> 10;
+    public static long tscToNano(long tsc) {
+        return (tsc * RDTSC_FACTOR) >> FACTOR_BITS;
     }
 }

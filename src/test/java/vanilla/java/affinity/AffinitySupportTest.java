@@ -73,4 +73,18 @@ public class AffinitySupportTest {
             }
         }
     }
+
+    @Test
+    public void testRdtscPerf() {
+        final int runs = 10 * 1000 * 1000;
+        AffinitySupport.rdtsc();
+        long start = System.nanoTime();
+        long start0 = AffinitySupport.rdtsc();
+        for (int i = 0; i < runs; i++)
+            AffinitySupport.rdtsc();
+        long time = System.nanoTime() - start;
+        final long time0 = AffinitySupport.rdtsc() - start0;
+        long time2 = AffinitySupport.tscToNano(time0);
+        System.out.printf("Each call took %.1f ns and the ratio was %.5f%n", (double) time / runs, (double) time2 / time);
+    }
 }

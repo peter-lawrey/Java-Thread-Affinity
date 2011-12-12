@@ -36,7 +36,7 @@ public class AffinityLock {
     public static AffinityLock acquireLock() {
         Thread t = Thread.currentThread();
         synchronized (AffinityLock.class) {
-            for (int i = PROCESSORS - 1; i > 0; i++) {
+            for (int i = PROCESSORS - 1; i > 0; i--) {
                 AffinityLock al = LOCKS[i];
                 if (!al.reserved) continue;
                 if (al.assignedThread != null) {
