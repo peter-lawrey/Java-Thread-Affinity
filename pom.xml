@@ -12,53 +12,37 @@
     <properties>
         <native.source.dir>src/main/c</native.source.dir>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
-                <artifactId>native-maven-plugin</artifactId>
-                <version>1.0-alpha-7</version>
-                <extensions>true</extensions>
-
-                <configuration>
-                    <javahClassNames>
-                        <javahClassName>vanilla.java.affinity.AffinitySupport</javahClassName>
-                    </javahClassNames>
-                    <javahSearchJNIFromDependencies>true</javahSearchJNIFromDependencies>
-                    <compilerStartOptions>
-                        <compilerStartOption>${commonCompilerOptions}</compilerStartOption>
-                    </compilerStartOptions>
-
-                    <sources>
-                        <source>
-                            <directory>${native.source.dir}</directory>
-                            <fileNames>
-                                <fileName>affinitysupport.c</fileName>
-                            </fileNames>
-                        </source>
-                        <source>
-                            <directory>${native.source.dir}/include</directory>
-                        </source>
-                        <source>
-                            <directory>target/native/javah</directory>
-                        </source>
-                        <source>
-                            <directory>/opt/java/openjdk/include/</directory>
-                        </source>
-                        <source>
-                            <directory>/opt/java/openjdk/include/linux/</directory>
-                        </source>
-                    </sources>
-
-                    <linkerStartOptions>
-                        <linkerStartOption>-shared</linkerStartOption>
-                    </linkerStartOptions>
-
-                </configuration>
-
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <!-- this execution happens just after compiling the java classes, and builds the native code. -->
+                        <id>build-native</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>src/main/c/Makefile</executable>
+                            <workingDirectory>src/main/c</workingDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
-
         </plugins>
-
     </build>
 </project>
