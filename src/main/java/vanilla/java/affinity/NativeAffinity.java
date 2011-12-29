@@ -39,7 +39,7 @@ public enum NativeAffinity implements AffinitySupport.IAffinity {
             start = rdtsc0();
             loaded = true;
         } catch (UnsatisfiedLinkError ule) {
-            System.out.println("Unable to find libaffinity in " + System.getProperty("java.library.path") + " " + ule);
+            System.out.println("Debug: Unable to find libaffinity in " + System.getProperty("java.library.path") + " " + ule);
             start = 0;
             loaded = false;
         }

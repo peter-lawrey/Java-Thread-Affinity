@@ -38,11 +38,9 @@
         </dependency>
         <!-- on linux install with sudo apt-get install libjna-java -->
         <dependency>
-            <groupId>com.sun.jna</groupId>
+            <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
-            <version>3.2.7</version>
-            <scope>system</scope>
-            <systemPath>/usr/share/java/jna.jar</systemPath>
+            <version>3.4.0</version>
         </dependency>
     </dependencies>
 
