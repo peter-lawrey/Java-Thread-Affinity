@@ -3,7 +3,7 @@ package vanilla.java.affinity;
 /**
  * @author peter.lawrey
  */
-public class AffinitySupportMain {
+public class NativeAffinityMain {
     public static void main(String... args) {
         AffinityLock al = AffinityLock.acquireLock();
         try {

@@ -1,6 +1,6 @@
 package vanilla.java.affinity;
 
-public class AffinitySupport {
+public class NativeAffinity {
     public static final boolean LOADED;
     private static final int FACTOR_BITS = 17;
     private static long RDTSC_FACTOR = 1 << FACTOR_BITS;

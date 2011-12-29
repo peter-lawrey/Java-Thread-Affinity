@@ -7,27 +7,27 @@ import static org.junit.Assert.*;
 /**
  * @author peter.lawrey
  */
-public class AffinitySupportTest {
+public class NativeAffinityTest {
     @Test
     public void testGetAffinity() throws Exception {
-        long a = AffinitySupport.getAffinity();
+        long a = NativeAffinity.getAffinity();
         assertFalse(a == 0);
         assertFalse(a == -1);
     }
 
     @Test
     public void testSetAffinity() throws Exception {
-        AffinitySupport.setAffinity(0x1);
-        assertEquals(0x1, AffinitySupport.getAffinity());
+        NativeAffinity.setAffinity(0x1);
+        assertEquals(0x1, NativeAffinity.getAffinity());
 
-        AffinitySupport.setAffinity(0x2);
-        assertEquals(0x2, AffinitySupport.getAffinity());
+        NativeAffinity.setAffinity(0x2);
+        assertEquals(0x2, NativeAffinity.getAffinity());
     }
 
     @Test
     public void testRdtsc() throws Exception {
-        long l1 = AffinitySupport.rdtsc();
-        long l2 = AffinitySupport.rdtsc();
+        long l1 = NativeAffinity.rdtsc();
+        long l2 = NativeAffinity.rdtsc();
         assertTrue(l2 > l1);
         assertTrue(l2 < l1 + 1000000);
     }
@@ -77,14 +77,14 @@ public class AffinitySupportTest {
     @Test
     public void testRdtscPerf() {
         final int runs = 10 * 1000 * 1000;
-        AffinitySupport.rdtsc();
+        NativeAffinity.rdtsc();
         long start = System.nanoTime();
-        long start0 = AffinitySupport.rdtsc();
+        long start0 = NativeAffinity.rdtsc();
         for (int i = 0; i < runs; i++)
-            AffinitySupport.rdtsc();
+            NativeAffinity.rdtsc();
         long time = System.nanoTime() - start;
-        final long time0 = AffinitySupport.rdtsc() - start0;
-        long time2 = AffinitySupport.tscToNano(time0);
+        final long time0 = NativeAffinity.rdtsc() - start0;
+        long time2 = NativeAffinity.tscToNano(time0);
         System.out.printf("Each call took %.1f ns and the ratio was %.5f%n", (double) time / runs, (double) time2 / time);
     }
 }

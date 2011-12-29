@@ -26,10 +26,10 @@ endif
 
 all: $(TARGET)
 
-$(TARGET): vanilla_java_affinity_AffinitySupport.c $(WORKING_DIR)/vanilla_java_affinity_AffinitySupport.h
-	gcc -O2 -shared -fPIC -L$(JVM_SHARED_LIB) -ljvm -lrt $(INCLUDES) vanilla_java_affinity_AffinitySupport.c -o $(TARGET)
+$(TARGET): vanilla_java_affinity_NativeAffinity.c $(WORKING_DIR)/vanilla_java_affinity_NativeAffinity.h
+	gcc -O2 -shared -fPIC -L$(JVM_SHARED_LIB) -ljvm -lrt $(INCLUDES) vanilla_java_affinity_NativeAffinity.c -o $(TARGET)
 
-$(WORKING_DIR)/vanilla_java_affinity_AffinitySupport.h: $(TARGET_DIR)/vanilla/java/affinity/AffinitySupport.class
+$(WORKING_DIR)/vanilla_java_affinity_NativeAffinity.h: $(TARGET_DIR)/vanilla/java/affinity/NativeAffinity.class
 	mkdir -p $(TARGET_DIR)/jni
-	javah -force -classpath $(JAVAH_CLASSPATH) -d $(WORKING_DIR) vanilla.java.affinity.AffinitySupport
+	javah -force -classpath $(JAVAH_CLASSPATH) -d $(WORKING_DIR) vanilla.java.affinity.NativeAffinity
 
