@@ -16,13 +16,12 @@
 
 package vanilla.java.affinity;
 
-import org.junit.Assume;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 /**
  * @author peter.lawrey
  */
+@Ignore("No methods for now")
 public class JNAAffinityTest {
     @BeforeClass
     public static void checkJniLibraryPresent() {
