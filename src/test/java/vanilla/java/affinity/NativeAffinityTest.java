@@ -16,6 +16,8 @@
 
 package vanilla.java.affinity;
 
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -24,6 +26,11 @@ import static org.junit.Assert.*;
  * @author peter.lawrey
  */
 public class NativeAffinityTest {
+    @BeforeClass
+    public void checkJniLibraryPresent() {
+        Assume.assumeTrue(NativeAffinity.LOADED);
+    }
+
     @Test
     public void testGetAffinity() throws Exception {
         long a = NativeAffinity.INSTANCE.getAffinity();

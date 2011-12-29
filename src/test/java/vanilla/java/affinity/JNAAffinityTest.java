@@ -16,12 +16,19 @@
 
 package vanilla.java.affinity;
 
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * @author peter.lawrey
  */
 public class JNAAffinityTest {
+    @BeforeClass
+    public void checkJniLibraryPresent() {
+        Assume.assumeTrue(JNAAffinity.LOADED);
+    }
+
     @Test
     public void testNanoTimePerf() {
         final int runs = 10 * 1000 * 1000;
