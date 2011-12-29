@@ -18,32 +18,16 @@ package vanilla.java.affinity.impl;
 
 import org.junit.Assume;
 import org.junit.BeforeClass;
-import org.junit.Test;
 
-import static org.junit.Assert.*;
-
-/**
- * @author peter.lawrey
- */
-public class NativeAffinityTest {
+/** @author peter.lawrey */
+public class NativeAffinityTest extends AbstractAffinityImplTest {
     @BeforeClass
     public static void checkJniLibraryPresent() {
-        Assume.assumeTrue(NativeAffinity.LOADED);
+        Assume.assumeTrue( NativeAffinity.LOADED );
     }
 
-    @Test
-    public void testGetAffinity() throws Exception {
-        long a = NativeAffinity.INSTANCE.getAffinity();
-        assertFalse(a == 0);
-        assertFalse(a == -1);
-    }
-
-    @Test
-    public void testSetAffinity() throws Exception {
-        NativeAffinity.INSTANCE.setAffinity(0x1);
-        assertEquals(0x1, NativeAffinity.INSTANCE.getAffinity());
-
-        NativeAffinity.INSTANCE.setAffinity(0x2);
-        assertEquals(0x2, NativeAffinity.INSTANCE.getAffinity());
+    @Override
+    public IAffinityImpl getImpl() {
+        return NativeAffinity.INSTANCE;
     }
 }

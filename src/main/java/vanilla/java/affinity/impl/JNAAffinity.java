@@ -66,7 +66,7 @@ public enum JNAAffinity implements IAffinityImpl {
     }
 
     @Override
-    public void setAffinity(long affinity) {
+    public void setAffinity(final long affinity) {
         final CLibrary lib = CLibrary.INSTANCE;
         final int ret = lib.sched_setaffinity(0, Long.SIZE / 8, new LongByReference(affinity));
         if (ret < 0) {
