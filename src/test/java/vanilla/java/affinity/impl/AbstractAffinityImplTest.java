@@ -28,9 +28,10 @@ public abstract class AbstractAffinityImplTest {
                 affinity > 0
         );
         final int cores = Runtime.getRuntime().availableProcessors();
+        final int allCoresMask = ( 1 << cores ) - 1;
         assertTrue(
-                "Affinity mask " + affinity + " must be <=(2^" + cores + "-1)",
-                affinity <= ( 1 << cores - 1)
+                "Affinity mask " + affinity + " must be <=(2^" + cores + "-1 = " + allCoresMask + ")",
+                affinity <= allCoresMask
         );
     }
 
