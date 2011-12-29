@@ -58,7 +58,7 @@ public abstract class AbstractAffinityImplTest {
         assertEquals( mask, _mask );
     }
 
-    @AfterClass
+    @After
     public void tearDown() throws Exception {
         final int cores = Runtime.getRuntime().availableProcessors();
         final int anyCore = ( 1 << cores ) - 1;
