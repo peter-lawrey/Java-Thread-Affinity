@@ -1,7 +1,7 @@
 package vanilla.java.clock.impl;
 
 import org.junit.*;
-import vanilla.java.affinity.NativeAffinity;
+import vanilla.java.affinity.impl.NativeAffinity;
 
 import static org.junit.Assert.*;
 

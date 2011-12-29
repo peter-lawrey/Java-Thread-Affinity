@@ -31,5 +31,5 @@ $(TARGET): vanilla_java_affinity_NativeAffinity.c $(WORKING_DIR)/vanilla_java_af
 
 $(WORKING_DIR)/vanilla_java_affinity_NativeAffinity.h: $(TARGET_DIR)/vanilla/java/affinity/NativeAffinity.class
 	mkdir -p $(TARGET_DIR)/jni
-	javah -force -classpath $(JAVAH_CLASSPATH) -d $(WORKING_DIR) vanilla.java.affinity.NativeAffinity
+	javah -force -classpath $(JAVAH_CLASSPATH) -d $(WORKING_DIR) vanilla.java.affinity.impl.NativeAffinity
 

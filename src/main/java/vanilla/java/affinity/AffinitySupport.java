@@ -16,6 +16,8 @@
 
 package vanilla.java.affinity;
 
+import vanilla.java.affinity.impl.*;
+
 /**
  * @author peter.lawrey
  */

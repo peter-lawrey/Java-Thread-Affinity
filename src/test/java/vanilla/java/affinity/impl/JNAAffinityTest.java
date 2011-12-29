@@ -17,7 +17,6 @@
 package vanilla.java.affinity.impl;
 
 import org.junit.*;
-import vanilla.java.affinity.impl.JNAAffinity;
 
 /**
  * @author peter.lawrey

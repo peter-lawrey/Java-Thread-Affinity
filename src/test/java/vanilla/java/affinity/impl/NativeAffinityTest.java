@@ -19,7 +19,6 @@ package vanilla.java.affinity.impl;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import vanilla.java.affinity.impl.NativeAffinity;
 
 import static org.junit.Assert.*;
 
