@@ -24,12 +24,6 @@ import vanilla.java.affinity.impl.*;
 public enum AffinitySupport {
     ;
 
-    protected interface IAffinityImpl {
-        public long getAffinity();
-
-        public void setAffinity(final long affinity);
-    }
-
     private static final IAffinityImpl affinityImpl;
 
     static {

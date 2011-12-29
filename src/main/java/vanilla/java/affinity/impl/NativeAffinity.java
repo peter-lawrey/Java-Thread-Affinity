@@ -16,7 +16,6 @@
 
 package vanilla.java.affinity.impl;
 
-import vanilla.java.affinity.AffinitySupport.IAffinityImpl;
 
 /**
  * @author peter.lawrey

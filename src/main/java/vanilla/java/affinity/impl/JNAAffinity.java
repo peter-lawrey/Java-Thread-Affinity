@@ -18,7 +18,6 @@ package vanilla.java.affinity.impl;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.LongByReference;
-import vanilla.java.affinity.AffinitySupport.IAffinityImpl;
 
 /**
  * @author peter.lawrey
