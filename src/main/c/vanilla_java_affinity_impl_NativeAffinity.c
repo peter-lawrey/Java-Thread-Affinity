@@ -17,13 +17,13 @@
 #define _GNU_SOURCE
 #include <jni.h>
 #include <sched.h>
-#include "vanilla_java_affinity_NativeAffinity.h"
+#include "vanilla_java_affinity_impl_NativeAffinity.h"
 /*
- * Class:     vanilla_java_affinity_NativeAffinity
+ * Class:     vanilla_java_affinity_impl_NativeAffinity
  * Method:    getAffinity0
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_vanilla_java_affinity_NativeAffinity_getAffinity0
+JNIEXPORT jlong JNICALL Java_vanilla_java_affinity_impl_NativeAffinity_getAffinity0
   (JNIEnv *env, jclass c) {
     cpu_set_t mask;
     int ret = sched_getaffinity(0, sizeof(mask), &mask);
@@ -40,7 +40,7 @@ JNIEXPORT jlong JNICALL Java_vanilla_java_affinity_NativeAffinity_getAffinity0
  * Method:    setAffinity0
  * Signature: (J)V
  */
-JNIEXPORT void JNICALL Java_vanilla_java_affinity_NativeAffinity_setAffinity0
+JNIEXPORT void JNICALL Java_vanilla_java_affinity_impl_NativeAffinity_setAffinity0
   (JNIEnv *env, jclass c, jlong affinity) {
     int i;
     cpu_set_t mask;
@@ -84,7 +84,7 @@ static __inline__ unsigned long long rdtsc (void) {
  * Method:    rdtsc0
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_vanilla_java_affinity_NativeAffinity_rdtsc0
+JNIEXPORT jlong JNICALL Java_vanilla_java_affinity_impl_NativeAffinity_rdtsc0
   (JNIEnv *env, jclass c) {
   return (jlong) rdtsc();
 }
