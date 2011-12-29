@@ -36,7 +36,7 @@
             <version>4.8.2</version>
             <scope>test</scope>
         </dependency>
-        <!-- on unix install with sudo apt-get install libjna-java -->
+        <!-- on linux install with sudo apt-get install libjna-java -->
         <dependency>
             <groupId>com.sun.jna</groupId>
             <artifactId>jna</artifactId>
