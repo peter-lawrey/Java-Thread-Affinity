@@ -22,7 +22,7 @@ package vanilla.java.affinity;
 public enum AffinitySupport {
     ;
 
-    interface IAffinityImpl {
+    protected interface IAffinityImpl {
         public long getAffinity();
 
         public void setAffinity(final long affinity);
@@ -31,12 +31,16 @@ public enum AffinitySupport {
     private static final IAffinityImpl affinityImpl;
 
     static {
-        if (NativeAffinity.LOADED)
+        if ( NativeAffinity.LOADED ) {
+            System.out.println( "Using JNI-based affinity control implementation" );
             affinityImpl = NativeAffinity.INSTANCE;
-        else if (JNAAffinity.LOADED)
+        } else if ( JNAAffinity.LOADED ) {
+            System.out.println( "Using JNA-based affinity control implementation" );
             affinityImpl = JNAAffinity.INSTANCE;
-        else
+        } else {
+            System.out.println( "WARNING: Using dummy affinity control implementation!" );
             affinityImpl = NullAffinity.INSTANCE;
+        }
     }
 
     public static long getAffinity() {

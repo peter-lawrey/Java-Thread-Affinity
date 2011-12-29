@@ -48,7 +48,7 @@ public enum JNAAffinity implements IAffinityImpl {
         try {
             INSTANCE.getAffinity();
             loaded = true;
-        } catch (Exception e) {
+        } catch (UnsatisfiedLinkError e) {
             System.out.println("Unable to load jna library " + e);
         }
         LOADED = loaded;

@@ -12,7 +12,10 @@ import static org.junit.Assert.*;
  * @since 29.12.11,  19:12
  */
 public class JNIClockTest {
-
+    @BeforeClass
+    public static void checkJniLibraryPresent() {
+        Assume.assumeTrue( JNIClock.LOADED );
+    }
 
     @Test
     public void testRdtsc() throws Exception {
