@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  */
 public class NativeAffinityTest {
     @BeforeClass
-    public void checkJniLibraryPresent() {
+    public static void checkJniLibraryPresent() {
         Assume.assumeTrue(NativeAffinity.LOADED);
     }
 

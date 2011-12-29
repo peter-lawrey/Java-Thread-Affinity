@@ -25,7 +25,7 @@ import org.junit.Test;
  */
 public class JNAAffinityTest {
     @BeforeClass
-    public void checkJniLibraryPresent() {
+    public static void checkJniLibraryPresent() {
         Assume.assumeTrue(JNAAffinity.LOADED);
     }
 
