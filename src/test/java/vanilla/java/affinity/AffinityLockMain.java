@@ -3,16 +3,13 @@ package vanilla.java.affinity;
 /**
  * @author peter.lawrey
  */
-public class NativeAffinityMain {
-    public static void main(String... args) {
-        AffinityLock al = AffinityLock.acquireLock();
-        try {
-            new Thread(new SleepRunnable(), "reader").start();
-            new Thread(new SleepRunnable(), "writer").start();
-            new Thread(new SleepRunnable(), "engine").start();
-        } finally {
-            al.release();
-        }
+public class AffinityLockMain {
+    public static void main(String... args) throws InterruptedException {
+        new Thread(new SleepRunnable(), "engine").start();
+        new Thread(new SleepRunnable(), "reader").start();
+        new Thread(new SleepRunnable(), "writer").start();
+        Thread.sleep(100);
+        System.out.println(AffinityLock.dumpLocks());
     }
 
     private static class SleepRunnable implements Runnable {

@@ -5,7 +5,7 @@ package vanilla.java.affinity;
  */
 public class AffinityLock {
     public static final int PROCESSORS = Runtime.getRuntime().availableProcessors();
-    public static final long BASE_AFFINITY = NativeAffinity.LOADED ? NativeAffinity.getAffinity() : -1L;
+    public static final long BASE_AFFINITY = AffinitySupport.getAffinity();
     public static final long RESERVED_AFFINITY = getReservedAffinity0();
     private static final AffinityLock[] LOCKS = new AffinityLock[PROCESSORS];
     private static final AffinityLock NONE = new AffinityLock(-1, false, false);
