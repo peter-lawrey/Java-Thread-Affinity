@@ -18,14 +18,15 @@ package vanilla.java.affinity;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.LongByReference;
+import vanilla.java.affinity.AffinitySupport.IAffinityImpl;
 
 /**
  * @author peter.lawrey
  * @author BegemoT
  */
-public enum JNAAffinity implements AffinitySupport.IAffinity {
+public enum JNAAffinity implements IAffinityImpl {
     INSTANCE;
-    public static final Boolean LOADED;
+    public static final boolean LOADED;
     public static final String LIBRARY_NAME = Platform.isWindows() ? "msvcrt" : "c";
 
     /**
@@ -79,10 +80,5 @@ public enum JNAAffinity implements AffinitySupport.IAffinity {
         final NativeLibrary nativeLib = NativeLibrary.getInstance(LIBRARY_NAME);
         final Pointer pErrNo = nativeLib.getFunction("errno");
         return pErrNo.getInt(0);
-    }
-
-    @Override
-    public long nanoTime() {
-        return System.nanoTime();
     }
 }

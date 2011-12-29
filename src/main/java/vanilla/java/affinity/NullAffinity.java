@@ -16,10 +16,12 @@
 
 package vanilla.java.affinity;
 
+import vanilla.java.affinity.AffinitySupport.IAffinityImpl;
+
 /**
  * @author peter.lawrey
  */
-public enum NullAffinity implements AffinitySupport.IAffinity {
+public enum NullAffinity implements IAffinityImpl {
     INSTANCE;
 
     @Override
@@ -30,10 +32,5 @@ public enum NullAffinity implements AffinitySupport.IAffinity {
     @Override
     public void setAffinity(long affinity) {
 
-    }
-
-    @Override
-    public long nanoTime() {
-        return System.nanoTime();
     }
 }

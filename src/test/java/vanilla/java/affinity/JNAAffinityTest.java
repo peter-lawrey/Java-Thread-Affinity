@@ -29,7 +29,7 @@ public class JNAAffinityTest {
         Assume.assumeTrue(JNAAffinity.LOADED);
     }
 
-    @Test
+    /*@Test
     public void testNanoTimePerf() {
         final int runs = 10 * 1000 * 1000;
         JNAAffinity.INSTANCE.nanoTime();
@@ -41,5 +41,5 @@ public class JNAAffinityTest {
         final long time0 = JNAAffinity.INSTANCE.nanoTime() - start0;
         long time2 = NativeAffinity.tscToNano(time0);
         System.out.printf("Each call took %.1f ns and the ratio was %.5f%n", (double) time / runs, (double) time2 / time);
-    }
+    }*/
 }

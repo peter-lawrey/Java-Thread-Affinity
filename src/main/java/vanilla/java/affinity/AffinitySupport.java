@@ -22,15 +22,13 @@ package vanilla.java.affinity;
 public enum AffinitySupport {
     ;
 
-    interface IAffinity {
+    interface IAffinityImpl {
         public long getAffinity();
 
-        public void setAffinity(long affinity);
-
-        public long nanoTime();
+        public void setAffinity(final long affinity);
     }
 
-    private static final IAffinity affinityImpl;
+    private static final IAffinityImpl affinityImpl;
 
     static {
         if (NativeAffinity.LOADED)
@@ -45,11 +43,7 @@ public enum AffinitySupport {
         return affinityImpl.getAffinity();
     }
 
-    public static void setAffinity(long affinity) {
+    public static void setAffinity(final long affinity) {
         affinityImpl.setAffinity(affinity);
-    }
-
-    public static long nanoTime() {
-        return affinityImpl.nanoTime();
     }
 }
