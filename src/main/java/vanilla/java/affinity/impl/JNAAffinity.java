@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package vanilla.java.affinity;
+package vanilla.java.affinity.impl;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.LongByReference;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package vanilla.java.affinity;
+package vanilla.java.affinity.impl;
 
 import vanilla.java.affinity.AffinitySupport.IAffinityImpl;
 

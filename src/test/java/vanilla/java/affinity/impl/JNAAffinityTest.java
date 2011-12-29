@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package vanilla.java.affinity;
+package vanilla.java.affinity.impl;
 
 import org.junit.*;
+import vanilla.java.affinity.impl.JNAAffinity;
 
 /**
  * @author peter.lawrey
@@ -25,7 +26,7 @@ import org.junit.*;
 public class JNAAffinityTest {
     @BeforeClass
     public static void checkJniLibraryPresent() {
-        Assume.assumeTrue(JNAAffinity.LOADED);
+        Assume.assumeTrue( JNAAffinity.LOADED);
     }
 
     /*@Test
