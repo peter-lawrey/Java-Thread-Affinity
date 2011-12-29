@@ -21,10 +21,17 @@ package vanilla.java.affinity;
  */
 public class AffinityLockMain {
     public static void main(String... args) throws InterruptedException {
+        AffinityLock al = AffinityLock.acquireLock();
+        try {
+            new Thread(new SleepRunnable(), "reader").start();
+            new Thread(new SleepRunnable(), "writer").start();
+            Thread.sleep(200);
+        } finally {
+            al.release();
+        }
         new Thread(new SleepRunnable(), "engine").start();
-        new Thread(new SleepRunnable(), "reader").start();
-        new Thread(new SleepRunnable(), "writer").start();
-        Thread.sleep(500);
+
+        Thread.sleep(200);
         System.out.println("\nThe assignment of CPUs is\n" + AffinityLock.dumpLocks());
     }
 
