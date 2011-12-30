@@ -19,6 +19,9 @@ package vanilla.java.affinity;
 import com.sun.jna.*;
 import com.sun.jna.ptr.LongByReference;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * @author peter.lawrey
  * @author BegemoT
@@ -26,6 +29,7 @@ import com.sun.jna.ptr.LongByReference;
 public enum JNAAffinity implements AffinitySupport.IAffinity {
     INSTANCE;
     public static final Boolean LOADED;
+    private static final Logger LOGGER = Logger.getLogger(JNAAffinity.class.getName());
     private static final String LIBRARY_NAME = Platform.isWindows() ? "msvcrt" : "c";
 
     /**
@@ -49,7 +53,7 @@ public enum JNAAffinity implements AffinitySupport.IAffinity {
             INSTANCE.getAffinity();
             loaded = true;
         } catch (Exception e) {
-            System.out.println("Unable to load jna library " + e);
+            LOGGER.log(Level.WARNING, "Unable to load jna library", e);
         }
         LOADED = loaded;
     }

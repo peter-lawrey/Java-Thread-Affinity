@@ -16,6 +16,9 @@
 
 package vanilla.java.affinity;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * @author peter.lawrey
  */
@@ -23,6 +26,8 @@ public class AffinityLock {
     public static final int PROCESSORS = Runtime.getRuntime().availableProcessors();
     public static final long BASE_AFFINITY = AffinitySupport.getAffinity();
     public static final long RESERVED_AFFINITY = getReservedAffinity0();
+
+    private static final Logger LOGGER = Logger.getLogger(AffinityLock.class.getName());
     private static final AffinityLock[] LOCKS = new AffinityLock[PROCESSORS];
     private static final AffinityLock NONE = new AffinityLock(-1, false, false);
 
@@ -57,14 +62,16 @@ public class AffinityLock {
                 if (!al.reserved) continue;
                 if (al.assignedThread != null) {
                     if (al.assignedThread.isAlive()) continue;
-                    System.err.println("Lock assigned to " + al.assignedThread + " but this thread is dead.");
+                    LOGGER.severe("Lock assigned to " + al.assignedThread + " but this thread is dead.");
                 }
                 al.assignedThread = t;
-                System.out.println("Assigning cpu " + al.id + " to " + al.assignedThread);
+                if (LOGGER.isLoggable(Level.INFO))
+                    LOGGER.info("Assigning cpu " + al.id + " to " + al.assignedThread);
                 return al;
             }
         }
-        System.out.println("No reservable CPU for " + t);
+        if (LOGGER.isLoggable(Level.WARNING))
+            LOGGER.warning("No reservable CPU for " + t);
         return AffinityLock.NONE;
     }
 
@@ -75,7 +82,8 @@ public class AffinityLock {
         synchronized (AffinityLock.class) {
             if (assignedThread != t)
                 throw new IllegalStateException("Cannot release lock " + id + " assigned to " + assignedThread);
-            System.out.println("Releasing cpu " + id + " from " + t);
+            if (LOGGER.isLoggable(Level.INFO))
+                LOGGER.info("Releasing cpu " + id + " from " + t);
             assignedThread = null;
         }
     }

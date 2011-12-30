@@ -16,11 +16,16 @@
 
 package vanilla.java.affinity;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * @author peter.lawrey
  */
 public enum NullAffinity implements AffinitySupport.IAffinity {
     INSTANCE;
+
+    private static final Logger LOGGER = Logger.getLogger(NullAffinity.class.getName());
 
     @Override
     public long getAffinity() {
@@ -29,7 +34,8 @@ public enum NullAffinity implements AffinitySupport.IAffinity {
 
     @Override
     public void setAffinity(long affinity) {
-
+        if (LOGGER.isLoggable(Level.FINE))
+            LOGGER.fine("unable to set mask to " + Long.toHexString(affinity) + " as the JNIa nd JNA libraries and not loaded");
     }
 
     @Override

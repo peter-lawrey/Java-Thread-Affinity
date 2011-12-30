@@ -16,6 +16,9 @@
 
 package vanilla.java.affinity;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * @author peter.lawrey
  */
@@ -23,6 +26,7 @@ public enum NativeAffinity implements AffinitySupport.IAffinity {
     INSTANCE;
 
     public static final boolean LOADED;
+    private static final Logger LOGGER = Logger.getLogger(NativeAffinity.class.getName());
     private static final int FACTOR_BITS = 17;
     private static long RDTSC_FACTOR = 1 << FACTOR_BITS;
     private static long CPU_FREQUENCY = 1000;
@@ -35,11 +39,13 @@ public enum NativeAffinity implements AffinitySupport.IAffinity {
             System.loadLibrary("affinity");
             estimateFrequency(50);
             estimateFrequency(200);
-            System.out.println("Estimated clock frequency was " + CPU_FREQUENCY + " MHz");
+            if (LOGGER.isLoggable(Level.INFO))
+                LOGGER.info("Estimated clock frequency was " + CPU_FREQUENCY + " MHz");
             start = rdtsc0();
             loaded = true;
         } catch (UnsatisfiedLinkError ule) {
-            System.out.println("Debug: Unable to find libaffinity in " + System.getProperty("java.library.path") + " " + ule);
+            if (LOGGER.isLoggable(Level.FINE))
+                LOGGER.fine("Unable to find libaffinity in " + System.getProperty("java.library.path") + " " + ule);
             start = 0;
             loaded = false;
         }
