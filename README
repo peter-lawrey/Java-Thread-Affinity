@@ -1,4 +1,5 @@
 [ Version History ]
+Version 1.2 - Restructure to separate Thread Affinity and nanoTime() functionality.
 
 Verison 1.1 - Add JNA implementation
 
