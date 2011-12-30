@@ -59,4 +59,13 @@ public class AffinityLockTest {
         locks[7].assignedThread.interrupt();
     }
 
+    @Test
+    public void assignReleaseThread() {
+        assertEquals(AffinityLock.BASE_AFFINITY, AffinitySupport.getAffinity());
+        AffinityLock al = AffinityLock.acquireLock();
+        assertEquals(1, Long.bitCount(AffinitySupport.getAffinity()));
+        al.release();
+        assertEquals(AffinityLock.BASE_AFFINITY, AffinitySupport.getAffinity());
+    }
+
 }

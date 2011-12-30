@@ -59,7 +59,6 @@ public class AffinityLock {
     }
 
     public static AffinityLock acquireLock() {
-        Thread t = Thread.currentThread();
         synchronized (AffinityLock.class) {
             for (int i = PROCESSORS - 1; i > 0; i--) {
                 AffinityLock al = LOCKS[i];
@@ -68,15 +67,20 @@ public class AffinityLock {
                     if (al.assignedThread.isAlive()) continue;
                     LOGGER.severe("Lock assigned to " + al.assignedThread + " but this thread is dead.");
                 }
-                al.assignedThread = t;
-                if (LOGGER.isLoggable(Level.INFO))
-                    LOGGER.info("Assigning cpu " + al.id + " to " + al.assignedThread);
+                al.assignCurrentThread();
                 return al;
             }
         }
         if (LOGGER.isLoggable(Level.WARNING))
-            LOGGER.warning("No reservable CPU for " + t);
+            LOGGER.warning("No reservable CPU for " + Thread.currentThread());
         return AffinityLock.NONE;
+    }
+
+    private void assignCurrentThread() {
+        assignedThread = Thread.currentThread();
+        AffinitySupport.setAffinity(1L << id);
+        if (LOGGER.isLoggable(Level.INFO))
+            LOGGER.info("Assigning cpu " + id + " to " + assignedThread);
     }
 
     public void release() {
@@ -91,6 +95,7 @@ public class AffinityLock {
                 LOGGER.info("Releasing cpu " + id + " from " + t);
             assignedThread = null;
         }
+        AffinitySupport.setAffinity(BASE_AFFINITY);
     }
 
     public static String dumpLocks() {
