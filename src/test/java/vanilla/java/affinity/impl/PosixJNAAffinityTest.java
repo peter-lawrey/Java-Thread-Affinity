@@ -19,14 +19,14 @@ package vanilla.java.affinity.impl;
 import org.junit.*;
 
 /** @author peter.lawrey */
-public class JNAAffinityTest extends AbstractAffinityImplTest {
+public class PosixJNAAffinityTest extends AbstractAffinityImplTest {
     @BeforeClass
     public static void checkJniLibraryPresent() {
-        Assume.assumeTrue( JNAAffinity.LOADED );
+        Assume.assumeTrue( PosixJNAAffinity.LOADED );
     }
 
     @Override
     public IAffinityImpl getImpl() {
-        return JNAAffinity.INSTANCE;
+        return PosixJNAAffinity.INSTANCE;
     }
 }

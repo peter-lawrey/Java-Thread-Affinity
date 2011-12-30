@@ -30,9 +30,9 @@ public enum AffinitySupport {
         if ( NativeAffinity.LOADED ) {
             System.out.println( "Using JNI-based affinity control implementation" );
             affinityImpl = NativeAffinity.INSTANCE;
-        } else if ( JNAAffinity.LOADED ) {
+        } else if ( PosixJNAAffinity.LOADED ) {
             System.out.println( "Using JNA-based affinity control implementation" );
-            affinityImpl = JNAAffinity.INSTANCE;
+            affinityImpl = PosixJNAAffinity.INSTANCE;
         } else {
             System.out.println( "WARNING: Using dummy affinity control implementation!" );
             affinityImpl = NullAffinity.INSTANCE;

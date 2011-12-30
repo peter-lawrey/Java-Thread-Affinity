@@ -20,6 +20,9 @@ package vanilla.java.affinity;
  * @author peter.lawrey
  */
 public class AffinityLock {
+    //fixme: It seems like on virtualized platforms .availableProcessors() value can change at
+    //runtime. We should think about how to adopt to such change
+
     public static final int PROCESSORS = Runtime.getRuntime().availableProcessors();
     public static final long BASE_AFFINITY = AffinitySupport.getAffinity();
     public static final long RESERVED_AFFINITY = getReservedAffinity0();

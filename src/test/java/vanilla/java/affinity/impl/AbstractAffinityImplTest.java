@@ -12,6 +12,8 @@ import static org.junit.Assert.assertTrue;
  */
 public abstract class AbstractAffinityImplTest {
 
+    protected static final int CORES = Runtime.getRuntime().availableProcessors();
+
     public abstract IAffinityImpl getImpl();
 
 
@@ -27,10 +29,9 @@ public abstract class AbstractAffinityImplTest {
                 "Affinity mask " + affinity + " must be >0",
                 affinity > 0
         );
-        final int cores = Runtime.getRuntime().availableProcessors();
-        final int allCoresMask = ( 1 << cores ) - 1;
+        final int allCoresMask = ( 1 << CORES ) - 1;
         assertTrue(
-                "Affinity mask " + affinity + " must be <=(2^" + cores + "-1 = " + allCoresMask + ")",
+                "Affinity mask " + affinity + " must be <=(2^" + CORES + "-1 = " + allCoresMask + ")",
                 affinity <= allCoresMask
         );
     }
@@ -43,7 +44,7 @@ public abstract class AbstractAffinityImplTest {
     @Test
     public void getAffinityReturnsValuePreviouslySet() throws Exception {
         final IAffinityImpl impl = getImpl();
-        final int cores = Runtime.getRuntime().availableProcessors();
+        final int cores = CORES;
         for ( int core = 0; core < cores; core++ ) {
             final long mask = ( 1 << core );
             getAffinityReturnsValuePreviouslySet( impl, mask );
@@ -60,8 +61,7 @@ public abstract class AbstractAffinityImplTest {
 
     @After
     public void tearDown() throws Exception {
-        final int cores = Runtime.getRuntime().availableProcessors();
-        final int anyCore = ( 1 << cores ) - 1;
+        final int anyCore = ( 1 << CORES ) - 1;
         getImpl().setAffinity( anyCore );
     }
 }
