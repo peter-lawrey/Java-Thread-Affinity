@@ -14,32 +14,23 @@
  * limitations under the License.
  */
 
-package vanilla.java.affinity;
+package vanilla.java.affinity.impl;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.junit.Assume;
+import org.junit.BeforeClass;
+import vanilla.java.affinity.IAffinity;
 
 /**
  * @author peter.lawrey
  */
-public enum NullAffinity implements AffinitySupport.IAffinity {
-    INSTANCE;
-
-    private static final Logger LOGGER = Logger.getLogger(NullAffinity.class.getName());
-
-    @Override
-    public long getAffinity() {
-        return -1;
+public class PosixJNAAffinityTest extends AbstractAffinityImplTest {
+    @BeforeClass
+    public static void checkJniLibraryPresent() {
+        Assume.assumeTrue(PosixJNAAffinity.LOADED);
     }
 
     @Override
-    public void setAffinity(long affinity) {
-        if (LOGGER.isLoggable(Level.FINE))
-            LOGGER.fine("unable to set mask to " + Long.toHexString(affinity) + " as the JNIa nd JNA libraries and not loaded");
-    }
-
-    @Override
-    public long nanoTime() {
-        return System.nanoTime();
+    public IAffinity getImpl() {
+        return PosixJNAAffinity.INSTANCE;
     }
 }

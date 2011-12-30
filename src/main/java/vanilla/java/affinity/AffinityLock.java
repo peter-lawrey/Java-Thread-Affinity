@@ -23,11 +23,15 @@ import java.util.logging.Logger;
  * @author peter.lawrey
  */
 public class AffinityLock {
+    // TODO It seems like on virtualized platforms .availableProcessors() value can change at
+    // TODO runtime. We should think about how to adopt to such change
+
     public static final int PROCESSORS = Runtime.getRuntime().availableProcessors();
     public static final long BASE_AFFINITY = AffinitySupport.getAffinity();
     public static final long RESERVED_AFFINITY = getReservedAffinity0();
 
     private static final Logger LOGGER = Logger.getLogger(AffinityLock.class.getName());
+
     private static final AffinityLock[] LOCKS = new AffinityLock[PROCESSORS];
     private static final AffinityLock NONE = new AffinityLock(-1, false, false);
 
@@ -79,6 +83,7 @@ public class AffinityLock {
         if (this == NONE) return;
 
         Thread t = Thread.currentThread();
+
         synchronized (AffinityLock.class) {
             if (assignedThread != t)
                 throw new IllegalStateException("Cannot release lock " + id + " assigned to " + assignedThread);

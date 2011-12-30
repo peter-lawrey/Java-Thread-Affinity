@@ -16,40 +16,39 @@
 
 package vanilla.java.affinity;
 
+import vanilla.java.affinity.impl.NativeAffinity;
+import vanilla.java.affinity.impl.NullAffinity;
+import vanilla.java.affinity.impl.PosixJNAAffinity;
+
+import java.util.logging.Logger;
+
 /**
  * @author peter.lawrey
  */
 public enum AffinitySupport {
     ;
+    private static final IAffinity AFFINITY_IMPL;
 
-    interface IAffinity {
-        public long getAffinity();
-
-        public void setAffinity(long affinity);
-
-        public long nanoTime();
-    }
-
-    private static final IAffinity affinityImpl;
+    private static final Logger LOGGER = Logger.getLogger(AffinitySupport.class.getName());
 
     static {
-        if (NativeAffinity.LOADED)
-            affinityImpl = NativeAffinity.INSTANCE;
-        else if (JNAAffinity.LOADED)
-            affinityImpl = JNAAffinity.INSTANCE;
-        else
-            affinityImpl = NullAffinity.INSTANCE;
+        if (NativeAffinity.LOADED) {
+            LOGGER.fine("Using JNI-based affinity control implementation");
+            AFFINITY_IMPL = NativeAffinity.INSTANCE;
+        } else if (PosixJNAAffinity.LOADED) {
+            LOGGER.fine("Using JNA-based affinity control implementation");
+            AFFINITY_IMPL = PosixJNAAffinity.INSTANCE;
+        } else {
+            LOGGER.info("Using dummy affinity control implementation!");
+            AFFINITY_IMPL = NullAffinity.INSTANCE;
+        }
     }
 
     public static long getAffinity() {
-        return affinityImpl.getAffinity();
+        return AFFINITY_IMPL.getAffinity();
     }
 
-    public static void setAffinity(long affinity) {
-        affinityImpl.setAffinity(affinity);
-    }
-
-    public static long nanoTime() {
-        return affinityImpl.nanoTime();
+    public static void setAffinity(final long affinity) {
+        AFFINITY_IMPL.setAffinity(affinity);
     }
 }
