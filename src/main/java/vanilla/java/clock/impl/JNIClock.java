@@ -1,6 +1,8 @@
 package vanilla.java.clock.impl;
 
 
+import java.util.logging.Logger;
+
 import vanilla.java.affinity.impl.NativeAffinity;
 import vanilla.java.clock.IClock;
 
@@ -14,7 +16,7 @@ import vanilla.java.clock.IClock;
 public enum JNIClock implements IClock {
     INSTANCE;
 
-
+    private static final Logger LOGGER = Logger.getLogger( JNIClock.class.getName() );
     public static final boolean LOADED;
     private static final int FACTOR_BITS = 17;
     private static long RDTSC_FACTOR = 1 << FACTOR_BITS;
@@ -28,11 +30,11 @@ public enum JNIClock implements IClock {
             System.loadLibrary( "affinity" );
             estimateFrequency( 50 );
             estimateFrequency( 200 );
-            System.out.println( "Estimated clock frequency was " + CPU_FREQUENCY + " MHz" );
+            LOGGER.info( "Estimated clock frequency was " + CPU_FREQUENCY + " MHz" );
             start = rdtsc0();
             loaded = true;
         } catch ( UnsatisfiedLinkError ule ) {
-            System.out.println( "Debug: Unable to find lib affinity in " + System.getProperty( "java.library.path" ) + " " + ule );
+            LOGGER.fine( "Unable to find libaffinity in [" + System.getProperty( "java.library.path" ) + "] " + ule );
             start = 0;
             loaded = false;
         }

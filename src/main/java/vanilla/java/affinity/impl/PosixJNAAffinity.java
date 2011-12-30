@@ -16,8 +16,12 @@
 
 package vanilla.java.affinity.impl;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.sun.jna.*;
 import com.sun.jna.ptr.LongByReference;
+
 
 /**
  * Implementation of {@link IAffinityImpl} based on JNA call of
@@ -31,6 +35,7 @@ import com.sun.jna.ptr.LongByReference;
  */
 public enum PosixJNAAffinity implements IAffinityImpl {
     INSTANCE;
+    private static final Logger LOGGER = Logger.getLogger( PosixJNAAffinity.class.getName() );
 
     public static final boolean LOADED;
 
@@ -58,7 +63,7 @@ public enum PosixJNAAffinity implements IAffinityImpl {
             INSTANCE.getAffinity();
             loaded = true;
         } catch ( UnsatisfiedLinkError e ) {
-            System.out.println( "Unable to load jna library " + e );
+            LOGGER.log( Level.WARNING, "Unable to load jna library", e );
         }
         LOADED = loaded;
     }

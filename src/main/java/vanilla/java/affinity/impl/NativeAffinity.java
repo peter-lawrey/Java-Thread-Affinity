@@ -17,11 +17,14 @@
 package vanilla.java.affinity.impl;
 
 
+import java.util.logging.Logger;
+
 /**
  * @author peter.lawrey
  */
 public enum NativeAffinity implements IAffinityImpl {
     INSTANCE;
+    private static final Logger LOGGER = Logger.getLogger( NativeAffinity.class.getName() );
 
     public static final boolean LOADED;
 
