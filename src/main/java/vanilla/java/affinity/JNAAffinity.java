@@ -26,18 +26,19 @@ import com.sun.jna.ptr.LongByReference;
 public enum JNAAffinity implements AffinitySupport.IAffinity {
     INSTANCE;
     public static final Boolean LOADED;
-    public static final String LIBRARY_NAME = Platform.isWindows() ? "msvcrt" : "c";
+    private static final String LIBRARY_NAME = Platform.isWindows() ? "msvcrt" : "c";
 
     /**
      * @author BegemoT
+     * @author jbellis
      */
     private interface CLibrary extends Library {
         public static final CLibrary INSTANCE = (CLibrary)
                 Native.loadLibrary(LIBRARY_NAME, CLibrary.class);
 
-        public int sched_setaffinity(final int pid, final int cpusetsize, final PointerType cpuset);
+        public int sched_setaffinity(final int pid, final int cpusetsize, final PointerType cpuset) throws LastErrorException;
 
-        public int sched_getaffinity(final int pid, final int cpusetsize, final PointerType cpuset);
+        public int sched_getaffinity(final int pid, final int cpusetsize, final PointerType cpuset) throws LastErrorException;
 
 //        public int sched_getcpu();
     }
@@ -58,10 +59,7 @@ public enum JNAAffinity implements AffinitySupport.IAffinity {
         final CLibrary lib = CLibrary.INSTANCE;
         final LongByReference cpuset = new LongByReference(0L);
         final int ret = lib.sched_getaffinity(0, Long.SIZE / 8, cpuset);
-        if (ret < 0) {
-            final int errNo = getErrorNo();
-            throw new IllegalStateException("sched_getaffinity((" + Long.SIZE / 8 + ") , &(" + cpuset + ") ) return " + ret + ", errno() = " + errNo);
-        }
+        assert ret == 0;
         return cpuset.getValue();
     }
 
@@ -69,16 +67,7 @@ public enum JNAAffinity implements AffinitySupport.IAffinity {
     public void setAffinity(long affinity) {
         final CLibrary lib = CLibrary.INSTANCE;
         final int ret = lib.sched_setaffinity(0, Long.SIZE / 8, new LongByReference(affinity));
-        if (ret < 0) {
-            final int errNo = getErrorNo();
-            throw new IllegalStateException("sched_setaffinity((" + Long.SIZE / 8 + ") , &(" + affinity + ") ) return " + ret + ", errno() = " + errNo);
-        }
-    }
-
-    private static int getErrorNo() {
-        final NativeLibrary nativeLib = NativeLibrary.getInstance(LIBRARY_NAME);
-        final Pointer pErrNo = nativeLib.getFunction("errno");
-        return pErrNo.getInt(0);
+        assert ret == 0;
     }
 
     @Override

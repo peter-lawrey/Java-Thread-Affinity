@@ -16,9 +16,13 @@
 
 package vanilla.java.affinity;
 
+import com.sun.jna.LastErrorException;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 
 /**
  * @author peter.lawrey
@@ -27,6 +31,23 @@ public class JNAAffinityTest {
     @BeforeClass
     public static void checkJniLibraryPresent() {
         Assume.assumeTrue(JNAAffinity.LOADED);
+    }
+
+    @Test
+    public void getSetAffinity() {
+        long init = JNAAffinity.INSTANCE.getAffinity();
+        JNAAffinity.INSTANCE.setAffinity(0x01);
+        assertEquals(0x01, JNAAffinity.INSTANCE.getAffinity());
+
+        try {
+            JNAAffinity.INSTANCE.setAffinity(0x00);
+            fail("This should fail");
+        } catch (LastErrorException expected) {
+            assertEquals("errno was " + expected.getErrorCode(), expected.getMessage());
+        }
+
+        JNAAffinity.INSTANCE.setAffinity(init);
+        assertEquals(init, JNAAffinity.INSTANCE.getAffinity());
     }
 
     @Test
