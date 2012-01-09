@@ -27,13 +27,13 @@ import vanilla.java.clock.impl.SystemClock;
  * @since 29.12.11,  19:02
  */
 public final class ClockSupport {
-    private static final IClock CLOCK_IMPL;
+    public static final IClock INSTANCE;
 
     static {
         if (JNIClock.LOADED) {
-            CLOCK_IMPL = JNIClock.INSTANCE;
+            INSTANCE = JNIClock.INSTANCE;
         } else {
-            CLOCK_IMPL = SystemClock.INSTANCE;
+            INSTANCE = SystemClock.INSTANCE;
         }
     }
 
@@ -42,6 +42,6 @@ public final class ClockSupport {
      * @see vanilla.java.clock.IClock#nanoTime()
      */
     public static long nanoTime() {
-        return CLOCK_IMPL.nanoTime();
+        return INSTANCE.nanoTime();
     }
 }
