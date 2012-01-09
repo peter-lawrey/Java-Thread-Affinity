@@ -1,4 +1,7 @@
 [ Version History ]
+
+Version 1.2.2 - Improve logging and handling of edge cases
+
 Version 1.2.1 - Fix a critical bug and added a unit test.
 
 Version 1.2 - Restructure to separate Thread Affinity and nanoTime() functionality.

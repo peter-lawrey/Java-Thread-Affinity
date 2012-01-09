@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 public class AffinityLock {
     // TODO It seems like on virtualized platforms .availableProcessors() value can change at
     // TODO runtime. We should think about how to adopt to such change
+    public static final String AFFINITY_RESERVED = "affinity.reserved";
 
     public static final int PROCESSORS = Runtime.getRuntime().availableProcessors();
     public static final long BASE_AFFINITY = AffinitySupport.getAffinity();
@@ -52,8 +53,8 @@ public class AffinityLock {
     }
 
     private static long getReservedAffinity0() {
-        String reservedAffinity = System.getProperty("affinity.reserved");
-        if (reservedAffinity == null)
+        String reservedAffinity = System.getProperty(AFFINITY_RESERVED);
+        if (reservedAffinity == null || reservedAffinity.trim().isEmpty())
             return ((1 << PROCESSORS) - 1) ^ BASE_AFFINITY;
         return Long.parseLong(reservedAffinity, 16);
     }
