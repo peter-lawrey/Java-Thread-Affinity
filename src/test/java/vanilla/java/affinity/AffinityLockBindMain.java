@@ -23,9 +23,9 @@ public class AffinityLockBindMain {
     public static void main(String... args) throws InterruptedException {
         AffinityLock al = AffinityLock.acquireLock();
         try {
-            AffinityLock readerLock = al.acquireLock(AffinityAssignmentStrategies.DIFFERENT_CORE);
+            AffinityLock readerLock = al.acquireLock(AffinityAssignmentStrategies.DIFFERENT_SOCKET, AffinityAssignmentStrategies.DIFFERENT_CORE);
             new Thread(new SleepRunnable(readerLock), "reader").start();
-            AffinityLock writerLock = readerLock.acquireLock(AffinityAssignmentStrategies.SAME_CORE);
+            AffinityLock writerLock = readerLock.acquireLock(AffinityAssignmentStrategies.SAME_CORE, AffinityAssignmentStrategies.SAME_SOCKET, AffinityAssignmentStrategies.ANY);
             new Thread(new SleepRunnable(writerLock), "writer").start();
             Thread.sleep(200);
         } finally {
