@@ -3,7 +3,7 @@ package vanilla.java.affinity;
 /**
  * @author peter.lawrey
  */
-public interface AffinityAssignmentStrategy {
+public interface AffinityStrategy {
     /**
      * @param cpuId  to cpudId to compare
      * @param cpuId2 with a second cpuId

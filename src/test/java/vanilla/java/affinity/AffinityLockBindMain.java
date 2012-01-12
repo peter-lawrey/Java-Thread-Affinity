@@ -16,6 +16,8 @@
 
 package vanilla.java.affinity;
 
+import static vanilla.java.affinity.AffinityStrategies.*;
+
 /**
  * @author peter.lawrey
  */
@@ -24,16 +26,16 @@ public class AffinityLockBindMain {
         AffinityLock al = AffinityLock.acquireLock();
         try {
             // find a cpu on a different socket, otherwise a different core.
-            AffinityLock readerLock = al.acquireLock(AffinityAssignmentStrategies.DIFFERENT_SOCKET, AffinityAssignmentStrategies.DIFFERENT_CORE);
+            AffinityLock readerLock = al.acquireLock(DIFFERENT_SOCKET, DIFFERENT_CORE);
             new Thread(new SleepRunnable(readerLock), "reader").start();
             // find a cpu on the same core, or the same socket, or any free cpu.
-            AffinityLock writerLock = readerLock.acquireLock(AffinityAssignmentStrategies.SAME_CORE, AffinityAssignmentStrategies.SAME_SOCKET, AffinityAssignmentStrategies.ANY);
+            AffinityLock writerLock = readerLock.acquireLock(SAME_CORE, SAME_SOCKET, ANY);
             new Thread(new SleepRunnable(writerLock), "writer").start();
             Thread.sleep(200);
         } finally {
             al.release();
         }
-        // re-use the same cpu for the engine.
+// re-use the same cpu for the engine.
         new Thread(new SleepRunnable(al), "engine").start();
 
         Thread.sleep(200);

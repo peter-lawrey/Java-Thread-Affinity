@@ -3,7 +3,7 @@ package vanilla.java.affinity;
 /**
  * @author peter.lawrey
  */
-public enum AffinityAssignmentStrategies implements AffinityAssignmentStrategy {
+public enum AffinityStrategies implements AffinityStrategy {
     ANY {
         @Override
         public boolean matches(int cpuId, int cpuId2) {

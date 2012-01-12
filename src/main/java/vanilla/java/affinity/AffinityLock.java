@@ -75,12 +75,12 @@ public class AffinityLock {
     }
 
     public static AffinityLock acquireLock(boolean bind) {
-        return acquireLock(bind, 0, AffinityAssignmentStrategies.ANY);
+        return acquireLock(bind, 0, AffinityStrategies.ANY);
     }
 
-    private static AffinityLock acquireLock(boolean bind, int cpuId, AffinityAssignmentStrategy... strategies) {
+    private static AffinityLock acquireLock(boolean bind, int cpuId, AffinityStrategy... strategies) {
         synchronized (AffinityLock.class) {
-            for (AffinityAssignmentStrategy strategy : strategies) {
+            for (AffinityStrategy strategy : strategies) {
                 for (int i = PROCESSORS - 1; i > 0; i--) {
                     AffinityLock al = LOCKS[i];
                     if (al.canReserve() && strategy.matches(cpuId, i)) {
@@ -155,7 +155,7 @@ public class AffinityLock {
         return true;
     }
 
-    public AffinityLock acquireLock(AffinityAssignmentStrategy... strategies) {
+    public AffinityLock acquireLock(AffinityStrategy... strategies) {
         return acquireLock(false, id, strategies);
     }
 

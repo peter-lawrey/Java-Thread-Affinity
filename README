@@ -1,5 +1,7 @@
 [ Version History ]
 
+Version 1.3 - Support thread layout strategies for using the same/different socket or cores.
+
 Version 1.2.2 - Improve logging and handling of edge cases
 
 Version 1.2.1 - Fix a critical bug and added a unit test.
