@@ -16,6 +16,11 @@
 
 package vanilla.java.affinity;
 
+import vanilla.java.affinity.impl.NoCpuLayout;
+import vanilla.java.affinity.impl.VanillaCpuLayout;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,6 +30,8 @@ import java.util.logging.Logger;
 public class AffinityLock {
     // TODO It seems like on virtualized platforms .availableProcessors() value can change at
     // TODO runtime. We should think about how to adopt to such change
+
+    // Static fields and methods.
     public static final String AFFINITY_RESERVED = "affinity.reserved";
 
     public static final int PROCESSORS = Runtime.getRuntime().availableProcessors();
@@ -35,21 +42,25 @@ public class AffinityLock {
 
     private static final AffinityLock[] LOCKS = new AffinityLock[PROCESSORS];
     private static final AffinityLock NONE = new AffinityLock(-1, false, false);
-
-    private final int id;
-    private final boolean base;
-    private final boolean reserved;
-    Thread assignedThread;
-
-    AffinityLock(int id, boolean base, boolean reserved) {
-        this.id = id;
-        this.base = base;
-        this.reserved = reserved;
-    }
+    private static CpuLayout cpuLayout = new NoCpuLayout(PROCESSORS);
 
     static {
         for (int i = 0; i < PROCESSORS; i++)
             LOCKS[i] = new AffinityLock(i, ((BASE_AFFINITY >> i) & 1) != 0, ((RESERVED_AFFINITY >> i) & 1) != 0);
+        try {
+            if (new File("/proc/cpuinfo").exists())
+                cpuLayout = VanillaCpuLayout.fromCpuInfo();
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Unable to load /proc/cpuinfo", e);
+        }
+    }
+
+    public static void cpuLayout(CpuLayout cpuLayout) {
+        AffinityLock.cpuLayout = cpuLayout;
+    }
+
+    public static CpuLayout cpuLayout() {
+        return cpuLayout;
     }
 
     private static long getReservedAffinity0() {
@@ -60,16 +71,23 @@ public class AffinityLock {
     }
 
     public static AffinityLock acquireLock() {
+        return acquireLock(true);
+    }
+
+    public static AffinityLock acquireLock(boolean bind) {
+        return acquireLock(bind, 0, AffinityAssignmentStrategies.ANY);
+    }
+
+    private static AffinityLock acquireLock(boolean bind, int cpuId, AffinityAssignmentStrategy... strategies) {
         synchronized (AffinityLock.class) {
-            for (int i = PROCESSORS - 1; i > 0; i--) {
-                AffinityLock al = LOCKS[i];
-                if (!al.reserved) continue;
-                if (al.assignedThread != null) {
-                    if (al.assignedThread.isAlive()) continue;
-                    LOGGER.severe("Lock assigned to " + al.assignedThread + " but this thread is dead.");
+            for (AffinityAssignmentStrategy strategy : strategies) {
+                for (int i = PROCESSORS - 1; i > 0; i--) {
+                    AffinityLock al = LOCKS[i];
+                    if (al.canReserve() && strategy.matches(cpuId, i)) {
+                        al.assignCurrentThread(bind);
+                        return al;
+                    }
                 }
-                al.assignCurrentThread();
-                return al;
             }
         }
         if (LOGGER.isLoggable(Level.WARNING))
@@ -77,27 +95,6 @@ public class AffinityLock {
         return AffinityLock.NONE;
     }
 
-    private void assignCurrentThread() {
-        assignedThread = Thread.currentThread();
-        AffinitySupport.setAffinity(1L << id);
-        if (LOGGER.isLoggable(Level.INFO))
-            LOGGER.info("Assigning cpu " + id + " to " + assignedThread);
-    }
-
-    public void release() {
-        if (this == NONE) return;
-
-        Thread t = Thread.currentThread();
-
-        synchronized (AffinityLock.class) {
-            if (assignedThread != t)
-                throw new IllegalStateException("Cannot release lock " + id + " assigned to " + assignedThread);
-            if (LOGGER.isLoggable(Level.INFO))
-                LOGGER.info("Releasing cpu " + id + " from " + t);
-            assignedThread = null;
-        }
-        AffinitySupport.setAffinity(BASE_AFFINITY);
-    }
 
     public static String dumpLocks() {
         return dumpLocks0(LOCKS);
@@ -119,5 +116,62 @@ public class AffinityLock {
             sb.append('\n');
         }
         return sb.toString();
+    }
+
+    //// Non static fields and methods.
+    private final int id;
+    private final boolean base;
+    private final boolean reserved;
+    boolean bound = false;
+    Thread assignedThread;
+
+    AffinityLock(int id, boolean base, boolean reserved) {
+        this.id = id;
+        this.base = base;
+        this.reserved = reserved;
+    }
+
+    private void assignCurrentThread(boolean bind) {
+        assignedThread = Thread.currentThread();
+        if (bind)
+            bind();
+    }
+
+    public void bind() {
+        if (bound) throw new IllegalStateException("Already bound to " + assignedThread);
+        bound = true;
+        assignedThread = Thread.currentThread();
+        AffinitySupport.setAffinity(1L << id);
+        if (LOGGER.isLoggable(Level.INFO))
+            LOGGER.info("Assigning cpu " + id + " to " + assignedThread);
+    }
+
+    private boolean canReserve() {
+        if (!reserved) return false;
+        if (assignedThread != null) {
+            if (assignedThread.isAlive()) return false;
+            LOGGER.severe("Lock assigned to " + assignedThread + " but this thread is dead.");
+        }
+        return true;
+    }
+
+    public AffinityLock acquireLock(AffinityAssignmentStrategy... strategies) {
+        return acquireLock(false, id, strategies);
+    }
+
+    public void release() {
+        if (this == NONE) return;
+
+        Thread t = Thread.currentThread();
+
+        synchronized (AffinityLock.class) {
+            if (assignedThread != t)
+                throw new IllegalStateException("Cannot release lock " + id + " assigned to " + assignedThread);
+            if (LOGGER.isLoggable(Level.INFO))
+                LOGGER.info("Releasing cpu " + id + " from " + t);
+            assignedThread = null;
+            bound = false;
+        }
+        AffinitySupport.setAffinity(BASE_AFFINITY);
     }
 }
