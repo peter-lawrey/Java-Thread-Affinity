@@ -30,6 +30,20 @@ public class NoCpuLayout implements CpuLayout {
         this.cpus = cpus;
     }
 
+    @Override
+    public int sockets() {
+        return 1;
+    }
+
+    @Override
+    public int coresPerSocket() {
+        return cpus;
+    }
+
+    @Override
+    public int threadPerCore() {
+        return 1;
+    }
 
     public int cpus() {
         return cpus;

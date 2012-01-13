@@ -17,6 +17,9 @@
 package vanilla.java.affinity;
 
 import org.junit.Test;
+import vanilla.java.affinity.impl.VanillaCpuLayout;
+
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -25,7 +28,8 @@ import static org.junit.Assert.assertEquals;
  */
 public class AffinityLockTest {
     @Test
-    public void dumpLocks() {
+    public void dumpLocks() throws IOException {
+        AffinityLock.cpuLayout(VanillaCpuLayout.fromCpuInfo("cpuinfo.i7"));
         AffinityLock[] locks = {
                 new AffinityLock(0, true, false),
                 new AffinityLock(1, false, false),
@@ -60,17 +64,24 @@ public class AffinityLockTest {
     }
 
     @Test
-    public void assignReleaseThread() {
+    public void assignReleaseThread() throws IOException {
         if (AffinityLock.RESERVED_AFFINITY == 0) {
             System.out.println("Cannot run affinity test as no threads gave been reserved.");
             System.out.println("Use isocpus= in grub.conf or use -D" + AffinityLock.AFFINITY_RESERVED + "={hex mask}");
             return;
         }
+        AffinityLock.cpuLayout(VanillaCpuLayout.fromCpuInfo());
 
         assertEquals(AffinityLock.BASE_AFFINITY, AffinitySupport.getAffinity());
         AffinityLock al = AffinityLock.acquireLock();
         assertEquals(1, Long.bitCount(AffinitySupport.getAffinity()));
         al.release();
+        assertEquals(AffinityLock.BASE_AFFINITY, AffinitySupport.getAffinity());
+
+        assertEquals(AffinityLock.BASE_AFFINITY, AffinitySupport.getAffinity());
+        AffinityLock al2 = AffinityLock.acquireCore();
+        assertEquals(1, Long.bitCount(AffinitySupport.getAffinity()));
+        al2.release();
         assertEquals(AffinityLock.BASE_AFFINITY, AffinitySupport.getAffinity());
     }
 

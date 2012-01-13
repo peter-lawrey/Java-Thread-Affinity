@@ -29,13 +29,29 @@ import static java.lang.Integer.parseInt;
 public class VanillaCpuLayout implements CpuLayout {
     public static final int MAX_CPUS_SUPPORTED = 64;
     private final List<CpuInfo> cpuDetails;
+    private final int sockets;
+    private final int coresPerSocket;
+    private final int threadsPerCore;
 
     VanillaCpuLayout(List<CpuInfo> cpuDetails) {
         this.cpuDetails = cpuDetails;
+        int sockets = 0, cores = 0, threads = 0;
+        for (CpuInfo cpuDetail : cpuDetails) {
+            if (sockets <= cpuDetail.socketId)
+                sockets = cpuDetail.socketId + 1;
+            if (cores <= cpuDetail.coreId)
+                cores = cpuDetail.coreId + 1;
+            if (threads <= cpuDetail.threadId)
+                threads = cpuDetail.threadId + 1;
+        }
+        assert cpuDetails.size() == sockets * cores * threads;
+        this.sockets = sockets;
+        this.coresPerSocket = cores;
+        this.threadsPerCore = threads;
     }
 
     public static VanillaCpuLayout fromProperties(String fileName) throws IOException {
-        return fromProperties(new FileInputStream(fileName));
+        return fromProperties(openFile(fileName));
     }
 
     public static VanillaCpuLayout fromProperties(InputStream is) throws IOException {
@@ -62,7 +78,18 @@ public class VanillaCpuLayout implements CpuLayout {
     }
 
     public static VanillaCpuLayout fromCpuInfo(String filename) throws IOException {
-        return fromCpuInfo(new FileInputStream(filename));
+        return fromCpuInfo(openFile(filename));
+    }
+
+    private static InputStream openFile(String filename) throws FileNotFoundException {
+        try {
+            return new FileInputStream(filename);
+        } catch (FileNotFoundException e) {
+            InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filename);
+            if (is == null)
+                throw e;
+            return is;
+        }
     }
 
     public static VanillaCpuLayout fromCpuInfo(InputStream is) throws IOException {
@@ -97,6 +124,19 @@ public class VanillaCpuLayout implements CpuLayout {
     @Override
     public int cpus() {
         return cpuDetails.size();
+    }
+
+    public int sockets() {
+        return sockets;
+    }
+
+    public int coresPerSocket() {
+        return coresPerSocket;
+    }
+
+    @Override
+    public int threadPerCore() {
+        return threadsPerCore;
     }
 
     @Override

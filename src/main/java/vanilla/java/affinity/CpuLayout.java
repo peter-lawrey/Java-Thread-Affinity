@@ -25,6 +25,12 @@ public interface CpuLayout {
      */
     public int cpus();
 
+    public int sockets();
+
+    public int coresPerSocket();
+
+    public int threadPerCore();
+
     /**
      * @param cpuId the logical processor number
      * @return which socket id this cpu is on.
