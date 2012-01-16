@@ -1,5 +1,7 @@
 [ Version History ]
 
+Version 1.4.1 - Add an AffinityThreadFactory to support ExecutorService
+
 Version 1.4 - Support binding of a whole core for hyper-threaded systems. AffinityLock.acquireCore()
 
 Version 1.3 - Support thread layout strategies for using the same/different socket or cores.
