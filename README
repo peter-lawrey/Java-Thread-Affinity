@@ -1,5 +1,7 @@
 [ Version History ]
 
+Version 1.5 - Add support for efficient pause()ing, whileEqual and whileLessThan with limited busy waiting.
+
 Version 1.4.1 - Add an AffinityThreadFactory to support ExecutorService
 
 Version 1.4 - Support binding of a whole core for hyper-threaded systems. AffinityLock.acquireCore()

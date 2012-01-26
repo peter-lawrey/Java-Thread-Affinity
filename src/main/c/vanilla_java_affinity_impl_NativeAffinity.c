@@ -18,6 +18,8 @@
 #include <jni.h>
 #include <sched.h>
 #include "vanilla_java_affinity_impl_NativeAffinity.h"
+#include "vanilla_java_busywaiting_impl_JNIBusyWaiting.h"
+#include "vanilla_java_clock_impl_JNIClock.h"
 /*
  * Class:     vanilla_java_affinity_impl_NativeAffinity
  * Method:    getAffinity0
@@ -87,4 +89,57 @@ static __inline__ unsigned long long rdtsc (void) {
 JNIEXPORT jlong JNICALL Java_vanilla_java_clock_impl_JNIClock_rdtsc0
   (JNIEnv *env, jclass c) {
   return (jlong) rdtsc();
+}
+
+// From http://locklessinc.com/articles/locks/
+/* Compile read-write barrier */
+#define barrier() asm volatile("": : :"memory")
+
+/* Pause instruction to prevent excess processor bus usage */
+#define cpu_relax() asm volatile("pause\n": : :"memory")
+
+/*
+ * Class:     vanilla_java_busywaiting_impl_JNIBusyWaiting
+ * Method:    pause0
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_vanilla_java_busywaiting_impl_JNIBusyWaiting_pause0
+  (JNIEnv *env, jclass c) {
+  cpu_relax();
+}
+
+/*
+ * Class:     vanilla_java_busywaiting_impl_JNIBusyWaiting
+ * Method:    whileEqual0
+ * Signature: (JIJ)J
+ */
+JNIEXPORT jlong JNICALL Java_vanilla_java_busywaiting_impl_JNIBusyWaiting_whileEqual0
+  (JNIEnv *env, jclass c, jlong address0, jint iterations, jlong value) {
+  volatile jlong * address = (volatile jlong *) address0;
+  barrier();
+  jlong value2 = *address;
+  while(value2 == value && iterations-- > 0) {
+      cpu_relax();
+      barrier();
+      value2 = *address;
+  }
+  return value2;
+}
+
+/*
+ * Class:     vanilla_java_busywaiting_impl_JNIBusyWaiting
+ * Method:    whileLessThan0
+ * Signature: (JIJ)J
+ */
+JNIEXPORT jlong JNICALL Java_vanilla_java_busywaiting_impl_JNIBusyWaiting_whileLessThan0
+  (JNIEnv *env, jclass c, jlong address0, jint iterations, jlong value) {
+  volatile jlong * address = (volatile jlong *) address0;
+  barrier();
+  jlong value2 = *address;
+  while(value2 < value && iterations-- > 0) {
+      cpu_relax();
+      barrier();
+      value2 = *address;
+  }
+  return value2;
 }

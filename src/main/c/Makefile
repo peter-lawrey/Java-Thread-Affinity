@@ -26,10 +26,17 @@ endif
 
 all: $(TARGET)
 
-$(TARGET): vanilla_java_affinity_impl_NativeAffinity.c $(WORKING_DIR)/vanilla_java_affinity_impl_NativeAffinity.h
+$(TARGET): vanilla_java_affinity_impl_NativeAffinity.c $(WORKING_DIR)/vanilla_java_affinity_impl_NativeAffinity.h $(WORKING_DIR)/vanilla_java_clock_impl_JNIClock.h $(WORKING_DIR)/vanilla_java_busywaiting_impl_BusyWaiting.h
 	gcc -O2 -shared -fPIC -L$(JVM_SHARED_LIB) -ljvm -lrt $(INCLUDES) vanilla_java_affinity_impl_NativeAffinity.c -o $(TARGET)
 
 $(WORKING_DIR)/vanilla_java_affinity_impl_NativeAffinity.h: $(TARGET_DIR)/vanilla/java/affinity/impl/NativeAffinity.class
 	mkdir -p $(TARGET_DIR)/jni
 	javah -force -classpath $(JAVAH_CLASSPATH) -d $(WORKING_DIR) vanilla.java.affinity.impl.NativeAffinity
 
+$(WORKING_DIR)/vanilla_java_clock_impl_JNIClock.h: $(TARGET_DIR)/vanilla/java/clock/impl/JNIClock.class
+	mkdir -p $(TARGET_DIR)/jni
+	javah -force -classpath $(JAVAH_CLASSPATH) -d $(WORKING_DIR) vanilla.java.clock.impl.JNIClock
+
+$(WORKING_DIR)/vanilla_java_busywaiting_impl_BusyWaiting.h: $(TARGET_DIR)/vanilla/java/busywaiting/impl/JNIBusyWaiting.class
+	mkdir -p $(TARGET_DIR)/jni
+	javah -force -classpath $(JAVAH_CLASSPATH) -d $(WORKING_DIR) vanilla.java.busywaiting.impl.JNIBusyWaiting
