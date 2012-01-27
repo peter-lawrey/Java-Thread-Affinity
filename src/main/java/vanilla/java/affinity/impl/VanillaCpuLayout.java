@@ -46,7 +46,9 @@ public class VanillaCpuLayout implements CpuLayout {
         this.sockets = sockets.size();
         this.coresPerSocket = cores.size();
         this.threadsPerCore = threads.size();
-        assert cpuDetails.size() == sockets() * coresPerSocket() * threadsPerCore();
+        assert cpuDetails.size() == sockets() * coresPerSocket() * threadsPerCore()
+                : "cpuDetails.size= " + cpuDetails.size() + " != sockets: " + sockets() +
+                " * coresPerSocket: " + coresPerSocket() + " * threadsPerCore: " + threadsPerCore();
     }
 
     public static VanillaCpuLayout fromProperties(String fileName) throws IOException {
