@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class AffinityLockTest {
     @Test
-    public void dumpLocks() throws IOException {
+    public void dumpLocksI7() throws IOException {
         AffinityLock.cpuLayout(VanillaCpuLayout.fromCpuInfo("cpuinfo.i7"));
         AffinityLock[] locks = {
                 new AffinityLock(0, true, false),
@@ -62,6 +62,29 @@ public class AffinityLockTest {
         locks[3].assignedThread.interrupt();
         locks[6].assignedThread.interrupt();
         locks[7].assignedThread.interrupt();
+    }
+
+    @Test
+    public void dumpLocksI3() throws IOException {
+        AffinityLock.cpuLayout(VanillaCpuLayout.fromCpuInfo("cpuinfo.i3"));
+        AffinityLock[] locks = {
+                new AffinityLock(0, true, false),
+                new AffinityLock(1, false, true),
+                new AffinityLock(2, true, false),
+                new AffinityLock(3, false, true),
+        };
+        locks[1].assignedThread = new Thread(new InterrupedThread(), "engine");
+        locks[1].assignedThread.start();
+        locks[3].assignedThread = new Thread(new InterrupedThread(), "main");
+
+        final String actual = AffinityLock.dumpLocks0(locks);
+        assertEquals("0: General use CPU\n" +
+                "1: Thread[engine,5,main] alive=true\n" +
+                "2: General use CPU\n" +
+                "3: Thread[main,5,main] alive=false\n", actual);
+        System.out.println(actual);
+
+        locks[1].assignedThread.interrupt();
     }
 
     @Test

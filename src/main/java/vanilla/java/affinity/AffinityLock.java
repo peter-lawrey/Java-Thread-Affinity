@@ -42,17 +42,20 @@ public class AffinityLock {
 
     private static final Logger LOGGER = Logger.getLogger(AffinityLock.class.getName());
 
-    private static final AffinityLock[] LOCKS = new AffinityLock[PROCESSORS];
+    private static AffinityLock[] LOCKS;
     private static NavigableMap<Integer, AffinityLock[]> CORES; // set by cpuLayout()
     private static final AffinityLock NONE = new AffinityLock(-1, false, false);
     private static CpuLayout cpuLayout = new NoCpuLayout(PROCESSORS);
 
     static {
-        for (int i = 0; i < PROCESSORS; i++)
-            LOCKS[i] = new AffinityLock(i, ((BASE_AFFINITY >> i) & 1) != 0, ((RESERVED_AFFINITY >> i) & 1) != 0);
         try {
-            if (new File("/proc/cpuinfo").exists())
+            if (new File("/proc/cpuinfo").exists()) {
                 cpuLayout(VanillaCpuLayout.fromCpuInfo());
+            } else {
+                LOCKS = new AffinityLock[PROCESSORS];
+                for (int i = 0; i < PROCESSORS; i++)
+                    LOCKS[i] = new AffinityLock(i, ((BASE_AFFINITY >> i) & 1) != 0, ((RESERVED_AFFINITY >> i) & 1) != 0);
+            }
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Unable to load /proc/cpuinfo", e);
         }
@@ -61,10 +64,12 @@ public class AffinityLock {
     public static void cpuLayout(CpuLayout cpuLayout) {
         synchronized (AffinityLock.class) {
             AffinityLock.cpuLayout = cpuLayout;
+            LOCKS = new AffinityLock[cpuLayout.cpus()];
             int cores = cpuLayout.sockets() * cpuLayout.coresPerSocket();
             int threads = cpuLayout.threadsPerCore();
             CORES = new TreeMap<Integer, AffinityLock[]>();
-            for (AffinityLock al : LOCKS) {
+            for (int i = 0; i < cpuLayout.cpus(); i++) {
+                AffinityLock al = LOCKS[i] = new AffinityLock(i, ((BASE_AFFINITY >> i) & 1) != 0, ((RESERVED_AFFINITY >> i) & 1) != 0);
                 final int id = al.id;
                 int core = coreForId(id);
                 AffinityLock[] als = CORES.get(core);
