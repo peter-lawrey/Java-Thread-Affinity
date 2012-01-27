@@ -40,11 +40,11 @@ public class VanillaCpuLayout implements CpuLayout {
                 threads = new TreeSet<Integer>();
         for (CpuInfo cpuDetail : cpuDetails) {
             sockets.add(cpuDetail.socketId);
-            cores.add(cpuDetail.coreId);
+            cores.add((cpuDetail.socketId << 16) + cpuDetail.coreId);
             threads.add(cpuDetail.threadId);
         }
         this.sockets = sockets.size();
-        this.coresPerSocket = cores.size();
+        this.coresPerSocket = cores.size() / sockets.size();
         this.threadsPerCore = threads.size();
         if (cpuDetails.size() != sockets() * coresPerSocket() * threadsPerCore()) {
             StringBuilder error = new StringBuilder();
