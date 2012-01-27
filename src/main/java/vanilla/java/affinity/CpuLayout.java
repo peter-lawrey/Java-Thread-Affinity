@@ -29,7 +29,7 @@ public interface CpuLayout {
 
     public int coresPerSocket();
 
-    public int threadPerCore();
+    public int threadsPerCore();
 
     /**
      * @param cpuId the logical processor number

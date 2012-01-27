@@ -41,7 +41,7 @@ public class NoCpuLayout implements CpuLayout {
     }
 
     @Override
-    public int threadPerCore() {
+    public int threadsPerCore() {
         return 1;
     }
 

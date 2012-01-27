@@ -35,19 +35,18 @@ public class VanillaCpuLayout implements CpuLayout {
 
     VanillaCpuLayout(List<CpuInfo> cpuDetails) {
         this.cpuDetails = cpuDetails;
-        int sockets = 0, cores = 0, threads = 0;
+        SortedSet<Integer> sockets = new TreeSet<Integer>(),
+                cores = new TreeSet<Integer>(),
+                threads = new TreeSet<Integer>();
         for (CpuInfo cpuDetail : cpuDetails) {
-            if (sockets <= cpuDetail.socketId)
-                sockets = cpuDetail.socketId + 1;
-            if (cores <= cpuDetail.coreId)
-                cores = cpuDetail.coreId + 1;
-            if (threads <= cpuDetail.threadId)
-                threads = cpuDetail.threadId + 1;
+            sockets.add(cpuDetail.socketId);
+            cores.add(cpuDetail.coreId);
+            threads.add(cpuDetail.threadId);
         }
-        assert cpuDetails.size() == sockets * cores * threads;
-        this.sockets = sockets;
-        this.coresPerSocket = cores;
-        this.threadsPerCore = threads;
+        this.sockets = sockets.size();
+        this.coresPerSocket = cores.size();
+        this.threadsPerCore = threads.size();
+        assert cpuDetails.size() == sockets() * coresPerSocket() * threadsPerCore();
     }
 
     public static VanillaCpuLayout fromProperties(String fileName) throws IOException {
@@ -135,7 +134,7 @@ public class VanillaCpuLayout implements CpuLayout {
     }
 
     @Override
-    public int threadPerCore() {
+    public int threadsPerCore() {
         return threadsPerCore;
     }
 

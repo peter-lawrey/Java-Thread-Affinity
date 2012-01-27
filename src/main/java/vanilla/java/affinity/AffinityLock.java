@@ -60,7 +60,7 @@ public class AffinityLock {
         synchronized (AffinityLock.class) {
             AffinityLock.cpuLayout = cpuLayout;
             int cores = cpuLayout.sockets() * cpuLayout.coresPerSocket();
-            int threads = cpuLayout.threadPerCore();
+            int threads = cpuLayout.threadsPerCore();
             CORES = new AffinityLock[cores][threads];
             for (AffinityLock al : LOCKS) {
                 final int id = al.id;

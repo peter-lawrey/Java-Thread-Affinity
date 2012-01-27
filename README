@@ -1,5 +1,8 @@
 [ Version History ]
 
+Version 1.5.1 - Add changes to support Intel i3
+https://github.com/peter-lawrey/Java-Thread-Affinity/issues/10
+
 Version 1.5 - Add support for efficient pause()ing, whileEqual and whileLessThan with limited busy waiting.
 
 Version 1.4.1 - Add an AffinityThreadFactory to support ExecutorService
