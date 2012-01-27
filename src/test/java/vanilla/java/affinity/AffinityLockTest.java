@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
 public class AffinityLockTest {
     @Test
     public void dumpLocksI7() throws IOException {
-        AffinityLock.cpuLayout(VanillaCpuLayout.fromCpuInfo("cpuinfo.i7"));
+        AffinityLock.cpuLayout(VanillaCpuLayout.fromCpuInfo("i7.cpuinfo"));
         AffinityLock[] locks = {
                 new AffinityLock(0, true, false),
                 new AffinityLock(1, false, false),
@@ -66,7 +66,7 @@ public class AffinityLockTest {
 
     @Test
     public void dumpLocksI3() throws IOException {
-        AffinityLock.cpuLayout(VanillaCpuLayout.fromCpuInfo("cpuinfo.i3"));
+        AffinityLock.cpuLayout(VanillaCpuLayout.fromCpuInfo("i3.cpuinfo"));
         AffinityLock[] locks = {
                 new AffinityLock(0, true, false),
                 new AffinityLock(1, false, true),
@@ -82,6 +82,25 @@ public class AffinityLockTest {
                 "1: Thread[engine,5,main] alive=true\n" +
                 "2: General use CPU\n" +
                 "3: Thread[main,5,main] alive=false\n", actual);
+        System.out.println(actual);
+
+        locks[1].assignedThread.interrupt();
+    }
+
+
+    @Test
+    public void dumpLocksCoreDuo() throws IOException {
+        AffinityLock.cpuLayout(VanillaCpuLayout.fromCpuInfo("core.duo.cpuinfo"));
+        AffinityLock[] locks = {
+                new AffinityLock(0, true, false),
+                new AffinityLock(1, false, true),
+        };
+        locks[1].assignedThread = new Thread(new InterrupedThread(), "engine");
+        locks[1].assignedThread.start();
+
+        final String actual = AffinityLock.dumpLocks0(locks);
+        assertEquals("0: General use CPU\n" +
+                "1: Thread[engine,5,main] alive=true\n", actual);
         System.out.println(actual);
 
         locks[1].assignedThread.interrupt();
