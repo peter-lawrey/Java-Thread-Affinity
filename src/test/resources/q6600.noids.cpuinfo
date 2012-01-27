@@ -14,7 +14,7 @@ flags : fpu vme de pse tsc msr pae mce cx8 apic mtrr pge mca cmov pat pse36 clfl
 bogomips : 4810.72
 clflush size : 64
 cache_alignment : 64
-address sizes : 36 bits physical, 48 bits virtual
+address sizes : 36 bits physical,  48 bits virtual
 power management:
 
 processor : 1
