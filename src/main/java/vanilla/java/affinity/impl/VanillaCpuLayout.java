@@ -111,6 +111,7 @@ public class VanillaCpuLayout implements CpuLayout {
                 details.threadId = count - 1;
                 cpuDetails.add(details);
                 details = new CpuInfo();
+                details.coreId = cpuDetails.size();
                 continue;
             }
             String[] words = line.split("\\s*:\\s*", 2);
