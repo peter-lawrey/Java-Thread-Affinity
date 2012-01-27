@@ -21,6 +21,8 @@ import vanilla.java.affinity.impl.VanillaCpuLayout;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,7 +43,7 @@ public class AffinityLock {
     private static final Logger LOGGER = Logger.getLogger(AffinityLock.class.getName());
 
     private static final AffinityLock[] LOCKS = new AffinityLock[PROCESSORS];
-    private static AffinityLock[][] CORES; // set by cpuLayout()
+    private static NavigableMap<Integer, AffinityLock[]> CORES; // set by cpuLayout()
     private static final AffinityLock NONE = new AffinityLock(-1, false, false);
     private static CpuLayout cpuLayout = new NoCpuLayout(PROCESSORS);
 
@@ -61,11 +63,14 @@ public class AffinityLock {
             AffinityLock.cpuLayout = cpuLayout;
             int cores = cpuLayout.sockets() * cpuLayout.coresPerSocket();
             int threads = cpuLayout.threadsPerCore();
-            CORES = new AffinityLock[cores][threads];
+            CORES = new TreeMap<Integer, AffinityLock[]>();
             for (AffinityLock al : LOCKS) {
                 final int id = al.id;
                 int core = coreForId(id);
-                CORES[core][cpuLayout.threadId(id)] = al;
+                AffinityLock[] als = CORES.get(core);
+                if (als == null)
+                    CORES.put(core, als = new AffinityLock[threads]);
+                als[cpuLayout.threadId(id)] = al;
             }
         }
     }
@@ -122,10 +127,10 @@ public class AffinityLock {
         synchronized (AffinityLock.class) {
             for (AffinityStrategy strategy : strategies) {
                 LOOP:
-                for (int i = CORES.length - 1; i > 0; i--) {
-                    AffinityLock[] als = CORES[i];
+                for (AffinityLock[] als : CORES.descendingMap().values()) {
                     for (AffinityLock al : als) {
-                        if (!al.canReserve() || !strategy.matches(cpuId, i))
+                        int core = coreForId(al.id);
+                        if (!al.canReserve() || !strategy.matches(cpuId, core))
                             continue LOOP;
                     }
                     final AffinityLock al = als[0];
@@ -191,7 +196,7 @@ public class AffinityLock {
 
         if (wholeCore) {
             int core = coreForId(id);
-            for (AffinityLock al : CORES[core]) {
+            for (AffinityLock al : CORES.get(core)) {
                 if (bound && al.assignedThread != null && al.assignedThread.isAlive()) {
                     LOGGER.severe("cpu " + al.id + " already bound to " + al.assignedThread);
                 } else {
@@ -202,7 +207,7 @@ public class AffinityLock {
             if (LOGGER.isLoggable(Level.INFO)) {
                 StringBuilder sb = new StringBuilder().append("Assigning core ").append(core);
                 String sep = ": cpus ";
-                for (AffinityLock al : CORES[core]) {
+                for (AffinityLock al : CORES.get(core)) {
                     sb.append(sep).append(al.id);
                     sep = ", ";
                 }
