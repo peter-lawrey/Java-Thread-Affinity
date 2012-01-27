@@ -60,6 +60,7 @@ public class AffinityLockTest {
 
         locks[2].assignedThread.interrupt();
         locks[3].assignedThread.interrupt();
+        locks[6].assignedThread.interrupt();
         locks[7].assignedThread.interrupt();
     }
 
