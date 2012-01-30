@@ -13,7 +13,8 @@ WORKING_DIR := $(TARGET_DIR)/../jni
 JAVA_BUILD_DIR := $(TARGET_DIR)
 
 JAVA_HOME ?= /usr/java/default
-JVM_SHARED_LIBS := -L$(JAVA_HOME)/jre/lib/amd64/server -L$(JAVA_HOME)/jre/lib/i386/server
+JAVA_LIB := $(JAVA_HOME)/jre/lib
+JVM_SHARED_LIBS := -L$(JAVA_LIB)/amd64/server -L$(JAVA_LIB)/i386/server  -L$(JAVA_LIB)/amd64/jrockit/ -L$(JAVA_LIB)/i386/jrockit/
 
 INCLUDES := -I $(JAVA_HOME)/include -I $(JAVA_HOME)/include/linux -I $(WORKING_DIR)
 
