@@ -114,6 +114,8 @@ public class AffinityLock {
     private static AffinityLock acquireLock(boolean bind, int cpuId, AffinityStrategy... strategies) {
         synchronized (AffinityLock.class) {
             for (AffinityStrategy strategy : strategies) {
+                // consider all processors except core 0 which is usually used by the OS.
+                // if you have only one core, this library is not approriate in any case.
                 for (int i = PROCESSORS - 1; i > 0; i--) {
                     AffinityLock al = LOCKS[i];
                     if (al.canReserve() && strategy.matches(cpuId, i)) {
