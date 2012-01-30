@@ -16,10 +16,7 @@
 
 package vanilla.java.affinity.impl;
 
-import com.sun.jna.LastErrorException;
-import com.sun.jna.Library;
-import com.sun.jna.Native;
-import com.sun.jna.PointerType;
+import com.sun.jna.*;
 import com.sun.jna.ptr.LongByReference;
 import vanilla.java.affinity.IAffinity;
 
@@ -43,7 +40,7 @@ public enum PosixJNAAffinity implements IAffinity {
 
     public static final boolean LOADED;
 
-    private static final String LIBRARY_NAME = "c";
+    private static final String LIBRARY_NAME = Platform.isWindows() ? "msvcrt" : "c";
 
     /**
      * @author BegemoT
