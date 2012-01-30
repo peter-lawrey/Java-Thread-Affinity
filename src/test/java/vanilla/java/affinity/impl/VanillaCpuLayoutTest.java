@@ -105,7 +105,7 @@ public class VanillaCpuLayoutTest {
 
     @Test
     public void testNoIDs() throws IOException {
-        final InputStream noids = getClass().getClassLoader().getResourceAsStream("q6600.noids.cpuinfo");
+        final InputStream noids = getClass().getClassLoader().getResourceAsStream("q6600.vm.cpuinfo");
         VanillaCpuLayout vcl = VanillaCpuLayout.fromCpuInfo(noids);
         assertEquals("0: CpuInfo{socketId=0, coreId=0, threadId=0}\n" +
                 "1: CpuInfo{socketId=0, coreId=1, threadId=0}\n" +
