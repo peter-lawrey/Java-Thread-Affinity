@@ -16,8 +16,11 @@
 
 package vanilla.java.affinity.impl;
 
-import com.sun.jna.*;
-import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.LastErrorException;
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.PointerType;
+import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.ptr.LongByReference;
 import vanilla.java.affinity.IAffinity;
 
@@ -42,13 +45,11 @@ public enum WindowsJNAAffinity implements IAffinity {
      * @author BegemoT
      */
     private interface CLibrary extends Library {
-        //public static final CLibrary INSTANCE = (CLibrary) Native.loadLibrary(LIBRARY_NAME, CLibrary.class);
-
-        public static final CLibrary INSTANCE = (CLibrary) Native.loadLibrary((Platform.isWindows() ? "kernel32" : "c"), CLibrary.class);
+        public static final CLibrary INSTANCE = (CLibrary) Native.loadLibrary("kernel32", CLibrary.class);
 
         public int GetProcessAffinityMask(final int pid, final PointerType lpProcessAffinityMask, final PointerType lpSystemAffinityMask) throws LastErrorException;
 
-        public void SetThreadAffinityMask(final int pid, final IntByReference lpProcessAffinityMask) throws LastErrorException;
+        public void SetThreadAffinityMask(final int pid, final WinDef.DWORD lpProcessAffinityMask) throws LastErrorException;
 
         public int GetCurrentThread() throws LastErrorException;
     }
@@ -88,7 +89,7 @@ public enum WindowsJNAAffinity implements IAffinity {
         final CLibrary lib = CLibrary.INSTANCE;
         try {
 
-            IntByReference aff = new IntByReference((int) affinity);
+            WinDef.DWORD aff = new WinDef.DWORD(affinity);
 
             lib.SetThreadAffinityMask(lib.GetCurrentThread(), aff);
 
