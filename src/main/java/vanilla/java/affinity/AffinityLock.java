@@ -231,7 +231,7 @@ public class AffinityLock {
     }
 
     private boolean canReserve() {
-        if (!reserved) return false;
+        if (reserved) return false;
         if (assignedThread != null) {
             if (assignedThread.isAlive()) return false;
             LOGGER.severe("Lock assigned to " + assignedThread + " but this thread is dead.");
