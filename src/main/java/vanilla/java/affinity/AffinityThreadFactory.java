@@ -19,6 +19,10 @@ package vanilla.java.affinity;
 import java.util.concurrent.ThreadFactory;
 
 /**
+ * This is a ThreadFactory which assigns threads based the strategies provided.
+ * <p/>
+ * If no strategies are provided AffinityStrategies.ANY is used.
+ *
  * @author peter.lawrey
  */
 public class AffinityThreadFactory implements ThreadFactory {
@@ -35,7 +39,7 @@ public class AffinityThreadFactory implements ThreadFactory {
     public AffinityThreadFactory(String name, boolean daemon, AffinityStrategy... strategies) {
         this.name = name;
         this.daemon = daemon;
-        this.strategies = strategies;
+        this.strategies = strategies.length == 0 ? new AffinityStrategy[]{AffinityStrategies.ANY} : strategies;
     }
 
     @Override

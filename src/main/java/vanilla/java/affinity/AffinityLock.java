@@ -27,6 +27,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * This utility class support locking a thread to a single core, or reserving a whole core for a thread.
+ *
  * @author peter.lawrey
  */
 public class AffinityLock {
@@ -61,6 +63,14 @@ public class AffinityLock {
         }
     }
 
+    /**
+     * Set the CPU layout for this machine.  CPUs which are not mentioned will be ignored.
+     * <p/>
+     * Changing the layout will have no impact on thread which have already been assigned.
+     * It only affects subsequent assignments.
+     *
+     * @param cpuLayout for this application to use for this machine.
+     */
     public static void cpuLayout(CpuLayout cpuLayout) {
         synchronized (AffinityLock.class) {
             AffinityLock.cpuLayout = cpuLayout;
@@ -84,6 +94,9 @@ public class AffinityLock {
         return cpuLayout.socketId(id) * cpuLayout.coresPerSocket() + cpuLayout.coreId(id);
     }
 
+    /**
+     * @return The current CpuLayout for the application.
+     */
     public static CpuLayout cpuLayout() {
         return cpuLayout;
     }
@@ -95,18 +108,46 @@ public class AffinityLock {
         return Long.parseLong(reservedAffinity, 16);
     }
 
+    /**
+     * Assign any free cpu to this thread.
+     *
+     * @return A handle for the current AffinityLock.
+     */
     public static AffinityLock acquireLock() {
         return acquireLock(true);
     }
 
+    /**
+     * Assign any free core to this thread.
+     * <p/>
+     * In reality, only one cpu is assigned, the rest of the threads for that core are reserved so they are not used.
+     *
+     * @return A handle for the current AffinityLock.
+     */
     public static AffinityLock acquireCore() {
         return acquireCore(true);
     }
 
+    /**
+     * Assign a cpu which can be bound to the current thread or another thread.
+     * <p/>
+     * This can be used for defining your thread layout centrally and passing the handle via dependency injection.
+     *
+     * @param bind if true, bind the current thread, if false, reserve a cpu which can be bound later.
+     * @return A handle for an affinity lock.
+     */
     public static AffinityLock acquireLock(boolean bind) {
         return acquireLock(bind, -1, AffinityStrategies.ANY);
     }
 
+    /**
+     * Assign a core(and all its cpus) which can be bound to the current thread or another thread.
+     * <p/>
+     * This can be used for defining your thread layout centrally and passing the handle via dependency injection.
+     *
+     * @param bind if true, bind the current thread, if false, reserve a cpu which can be bound later.
+     * @return A handle for an affinity lock.
+     */
     public static AffinityLock acquireCore(boolean bind) {
         return acquireCore(bind, -1, AffinityStrategies.ANY);
     }
@@ -152,6 +193,9 @@ public class AffinityLock {
     }
 
 
+    /**
+     * @return All the current locks as a String.
+     */
     public static String dumpLocks() {
         return dumpLocks0(LOCKS);
     }
@@ -193,10 +237,18 @@ public class AffinityLock {
             bind(wholeCore);
     }
 
+    /**
+     * Bind the current thread to this reserved lock.
+     */
     public void bind() {
         bind(false);
     }
 
+    /**
+     * Bind the current thread to this reserved lock.
+     *
+     * @param wholeCore if true, also reserve the whole core.
+     */
     public void bind(boolean wholeCore) {
         if (bound && assignedThread != null && assignedThread.isAlive())
             throw new IllegalStateException("cpu " + id + " already bound to " + assignedThread);
@@ -239,10 +291,19 @@ public class AffinityLock {
         return true;
     }
 
+    /**
+     * Give another affinity lock relative to this one based on a list of strategies.
+     *
+     * @param strategies To dertemine if you want the same/different core/socket.
+     * @return A matching AffinityLock.
+     */
     public AffinityLock acquireLock(AffinityStrategy... strategies) {
         return acquireLock(false, id, strategies);
     }
 
+    /**
+     * Release the current AffinityLock which can be discarded.
+     */
     public void release() {
         Thread t = Thread.currentThread();
         synchronized (AffinityLock.class) {
@@ -261,5 +322,14 @@ public class AffinityLock {
             }
         }
         AffinitySupport.setAffinity(BASE_AFFINITY);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        if (reserved) {
+            LOGGER.warning("Affinity lock for " + assignedThread + " was discarded rather than release()d in a controlled manner.");
+            release();
+        }
+        super.finalize();
     }
 }

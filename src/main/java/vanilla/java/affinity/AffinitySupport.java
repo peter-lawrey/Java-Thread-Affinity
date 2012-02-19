@@ -25,6 +25,8 @@ import vanilla.java.affinity.impl.WindowsJNAAffinity;
 import java.util.logging.Logger;
 
 /**
+ * Library to wrap low level JNI or JNA calls.  Can be called without needing to know the actual implementation used.
+ *
  * @author peter.lawrey
  */
 public enum AffinitySupport {

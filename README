@@ -4,6 +4,8 @@ https://www.ohloh.net/p/Java-Thread-Affinity
 
 [ Version History ]
 
+Version 1.5.2 - Added Windows support and Javadoc for all public methods.
+
 Version 1.5.1 - Add changes to support i386 and Intel i3
 https://github.com/peter-lawrey/Java-Thread-Affinity/issues/9
 https://github.com/peter-lawrey/Java-Thread-Affinity/issues/10

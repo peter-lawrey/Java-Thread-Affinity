@@ -17,6 +17,8 @@
 package vanilla.java.affinity;
 
 /**
+ * Allow you define a strategy for find the a cpu relative to another select cpu.
+ *
  * @author peter.lawrey
  */
 public interface AffinityStrategy {
