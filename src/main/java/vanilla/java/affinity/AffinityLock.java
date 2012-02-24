@@ -75,7 +75,6 @@ public class AffinityLock {
         synchronized (AffinityLock.class) {
             AffinityLock.cpuLayout = cpuLayout;
             LOCKS = new AffinityLock[cpuLayout.cpus()];
-            int cores = cpuLayout.sockets() * cpuLayout.coresPerSocket();
             int threads = cpuLayout.threadsPerCore();
             CORES = new TreeMap<Integer, AffinityLock[]>();
             for (int i = 0; i < cpuLayout.cpus(); i++) {
