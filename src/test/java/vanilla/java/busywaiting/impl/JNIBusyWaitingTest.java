@@ -16,6 +16,7 @@
 
 package vanilla.java.busywaiting.impl;
 
+import com.sun.jna.Platform;
 import org.junit.Test;
 import sun.nio.ch.DirectBuffer;
 
@@ -29,6 +30,8 @@ import static junit.framework.Assert.assertEquals;
 public class JNIBusyWaitingTest {
     @Test
     public void testPause() {
+        if (!Platform.isLinux()) return;
+
         int runs = 2000000;
         long start = System.nanoTime();
         for (int i = 0; i < runs; i++)
@@ -39,6 +42,8 @@ public class JNIBusyWaitingTest {
 
     @Test
     public void testWhileEqual() {
+        if (!Platform.isLinux()) return;
+
         DirectBuffer buffer = (DirectBuffer) ByteBuffer.allocateDirect(8);
         int runs = 100000000;
         long start = System.nanoTime();
@@ -49,6 +54,8 @@ public class JNIBusyWaitingTest {
 
     @Test
     public void testWhileLessThan() {
+        if (!Platform.isLinux()) return;
+
         DirectBuffer buffer = (DirectBuffer) ByteBuffer.allocateDirect(8);
         int runs = 100000000;
         long start = System.nanoTime();
