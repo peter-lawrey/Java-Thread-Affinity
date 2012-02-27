@@ -28,7 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Implementation of {@link IAffinity} based on JNA call of
+ * Implementation of {@link vanilla.java.affinity.IAffinity} based on JNA call of
  * sched_SetThreadAffinityMask/GetProcessAffinityMask from Windows 'kernel32' library. Applicable for
  * most windows platforms
  * <p/> *
@@ -87,14 +87,12 @@ public enum WindowsJNAAffinity implements IAffinity {
     @Override
     public void setAffinity(final long affinity) {
         final CLibrary lib = CLibrary.INSTANCE;
+
+        WinDef.DWORD aff = new WinDef.DWORD(affinity);
         try {
-
-            WinDef.DWORD aff = new WinDef.DWORD(affinity);
-
             lib.SetThreadAffinityMask(lib.GetCurrentThread(), aff);
 
         } catch (LastErrorException e) {
-            e.printStackTrace();
             throw new IllegalStateException("sched_getaffinity((" + Long.SIZE / 8 + ") , &(" + affinity + ") ) errorNo=" + e.getErrorCode(), e);
         }
     }

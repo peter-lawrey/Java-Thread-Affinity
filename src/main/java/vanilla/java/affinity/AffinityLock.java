@@ -278,7 +278,8 @@ public class AffinityLock {
             if (LOGGER.isLoggable(Level.INFO))
                 LOGGER.info("Assigning cpu " + id + " to " + assignedThread);
         }
-        AffinitySupport.setAffinity(1L << id);
+        if (id >= 0)
+            AffinitySupport.setAffinity(1L << id);
     }
 
     private boolean canReserve() {
