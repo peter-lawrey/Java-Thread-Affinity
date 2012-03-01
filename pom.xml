@@ -22,7 +22,7 @@
 
     <groupId>vanilla.java</groupId>
     <artifactId>affinity</artifactId>
-    <version>1.5.2</version>
+    <version>1.5.3</version>
     <packaging>jar</packaging>
 
     <licenses>
@@ -59,29 +59,93 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>Unix</id>
+
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-plugin</artifactId>
+                            <version>2.9</version>
+                            <configuration>
+                                <environmentVariables>
+                                    <LD_LIBRARY_PATH>target/classes</LD_LIBRARY_PATH>
+                                    <DYLD_LIBRARY_PATH>target/classes</DYLD_LIBRARY_PATH>
+                                </environmentVariables>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+
+                    <!-- TODO make git remember that the file should be executable -->
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+                        <executions>
+                            <execution>
+                                <id>build-native</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                                <configuration>
+                                    <target>
+                                        <property name="makefile"
+                                                  value="${project.basedir}/${native.source.dir}/Makefile"/>
+                                        <!-- make it executable -->
+                                        <chmod file="${makefile}" perm="u+x"/>
+                                    </target>
+                                </configuration>
+
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <executions>
+                            <execution>
+                                <!-- this execution happens just after compiling the java classes, and builds the native code. -->
+                                <id>build-native</id>
+                                <phase>process-classes</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>src/main/c/Makefile</executable>
+                                    <workingDirectory>src/main/c</workingDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <build>
-        <extensions>
-            <extension>
-                <groupId>org.jvnet.wagon-svn</groupId>
-                <artifactId>wagon-svn</artifactId>
-                <version>1.8</version>
-            </extension>
-        </extensions>
-	<pluginManagement>
-	  <plugins>
-	    <plugin>
-	      <groupId>org.apache.maven.plugins</groupId>
-	      <artifactId>maven-surefire-plugin</artifactId>
-	      <version>2.9</version>
-	      <configuration>
-		<environmentVariables>
-		  <LD_LIBRARY_PATH>target/classes</LD_LIBRARY_PATH>
-		  <DYLD_LIBRARY_PATH>target/classes</DYLD_LIBRARY_PATH>
-		</environmentVariables>
-	      </configuration>
-	    </plugin>
-	  </plugins>
-	</pluginManagement>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.9</version>
+                    <configuration>
+                        <environmentVariables>
+                            <LD_LIBRARY_PATH>target/classes</LD_LIBRARY_PATH>
+                            <DYLD_LIBRARY_PATH>target/classes</DYLD_LIBRARY_PATH>
+                        </environmentVariables>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -90,49 +154,6 @@
                     <source>1.6</source>
                     <target>1.6</target>
                 </configuration>
-            </plugin>
-
-            <!-- TODO make git remember that the file should be executable -->
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>build-native</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <property name="makefile" value="${project.basedir}/${native.source.dir}/Makefile"/>
-                                <!-- make it executable -->
-                                <chmod file="${makefile}" perm="u+x"/>
-                            </target>
-                        </configuration>
-
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <executions>
-                    <execution>
-                        <!-- this execution happens just after compiling the java classes, and builds the native code. -->
-                        <id>build-native</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>src/main/c/Makefile</executable>
-                            <workingDirectory>src/main/c</workingDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
 
             <plugin>
