@@ -110,7 +110,7 @@ public class AffinityLockTest {
     public void assignReleaseThread() throws IOException {
         if (AffinityLock.RESERVED_AFFINITY == 0) {
             System.out.println("Cannot run affinity test as no threads gave been reserved.");
-            System.out.println("Use isocpus= in grub.conf or use -D" + AffinityLock.AFFINITY_RESERVED + "={hex mask}");
+            System.out.println("Use isolcpus= in grub.conf or use -D" + AffinityLock.AFFINITY_RESERVED + "={hex mask}");
             return;
         }
         AffinityLock.cpuLayout(VanillaCpuLayout.fromCpuInfo());
