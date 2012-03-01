@@ -43,7 +43,7 @@ public enum AffinityStrategies implements AffinityStrategy {
         }
     },
     /**
-     * Must be a cpu on the same socket/chip, different core.
+     * Must be a cpu on the same socket/chip but different core.
      */
     SAME_SOCKET {
         @Override
