@@ -293,8 +293,11 @@ public class AffinityLock {
 
     /**
      * Give another affinity lock relative to this one based on a list of strategies.
+     * <p/>
+     * The strategies are evaluated in order to (like a search path) to find the next appropriate thread.
+     * If ANY is not the last strategy, a warning is logged and no cpu is assigned (leaving the OS to choose)
      *
-     * @param strategies To dertemine if you want the same/different core/socket.
+     * @param strategies To determine if you want the same/different core/socket.
      * @return A matching AffinityLock.
      */
     public AffinityLock acquireLock(AffinityStrategy... strategies) {
