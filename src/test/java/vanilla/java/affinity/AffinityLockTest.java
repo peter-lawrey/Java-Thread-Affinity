@@ -22,6 +22,7 @@ import vanilla.java.affinity.impl.VanillaCpuLayout;
 import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 
 /**
  * @author peter.lawrey
@@ -126,6 +127,19 @@ public class AffinityLockTest {
         assertEquals(1, Long.bitCount(AffinitySupport.getAffinity()));
         al2.release();
         assertEquals(AffinityLock.BASE_AFFINITY, AffinitySupport.getAffinity());
+    }
+
+    @Test
+    public void testIssue21() {
+        AffinityLock al = AffinityLock.acquireLock();
+        AffinityLock alForAnotherThread = al.acquireLock(AffinityStrategies.ANY);
+        AffinityLock alForAnotherThread2 = al.acquireLock(AffinityStrategies.ANY);
+        assertNotSame(alForAnotherThread, alForAnotherThread2);
+        assertNotSame(alForAnotherThread.cpuId(), alForAnotherThread2.cpuId());
+
+        al.release();
+        alForAnotherThread.release();
+        alForAnotherThread2.release();
     }
 
 }

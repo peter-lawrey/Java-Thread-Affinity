@@ -238,6 +238,12 @@ public class AffinityLock {
         this.reserved = reserved;
     }
 
+    /**
+     * Assigning the current thread has a side effect of preventing the lock being used again until it is released.
+     *
+     * @param bind      whether to bind the thread as well
+     * @param wholeCore whether to reserve all the thread in the same core.
+     */
     private void assignCurrentThread(boolean bind, boolean wholeCore) {
         assignedThread = Thread.currentThread();
         if (bind)
@@ -342,5 +348,9 @@ public class AffinityLock {
             release();
         }
         super.finalize();
+    }
+
+    public int cpuId() {
+        return cpuId;
     }
 }
