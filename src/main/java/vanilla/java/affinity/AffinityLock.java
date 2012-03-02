@@ -79,15 +79,24 @@ public class AffinityLock {
             CORES = new TreeMap<Integer, AffinityLock[]>();
             for (int i = 0; i < cpuLayout.cpus(); i++) {
                 AffinityLock al = LOCKS[i] = new AffinityLock(i, ((BASE_AFFINITY >> i) & 1) != 0, ((RESERVED_AFFINITY >> i) & 1) != 0);
-                final int id = al.id;
-                int core = coreForId(id);
-                AffinityLock[] als = CORES.get(core);
+                final int layoutId = al.cpuId;
+                int logicalCpuId = coreForId(layoutId);
+                AffinityLock[] als = CORES.get(logicalCpuId);
                 if (als == null)
-                    CORES.put(core, als = new AffinityLock[threads]);
-                als[cpuLayout.threadId(id)] = al;
+                    CORES.put(logicalCpuId, als = new AffinityLock[threads]);
+                als[cpuLayout.threadId(layoutId)] = al;
             }
         }
     }
+
+    /**
+     * Translate a layout id into a logical cpu id.
+     * <p/>
+     * This translation is perform so that regardless of how
+     *
+     * @param id
+     * @return
+     */
 
     private static int coreForId(int id) {
         return cpuLayout.socketId(id) * cpuLayout.coresPerSocket() + cpuLayout.coreId(id);
@@ -175,11 +184,10 @@ public class AffinityLock {
             for (AffinityStrategy strategy : strategies) {
                 LOOP:
                 for (AffinityLock[] als : CORES.descendingMap().values()) {
-                    for (AffinityLock al : als) {
-                        int core = coreForId(al.id);
-                        if (!al.canReserve() || !strategy.matches(cpuId, core))
+                    for (AffinityLock al : als)
+                        if (!al.canReserve() || !strategy.matches(cpuId, al.cpuId))
                             continue LOOP;
-                    }
+
                     final AffinityLock al = als[0];
                     al.assignCurrentThread(bind, true);
                     return al;
@@ -218,14 +226,14 @@ public class AffinityLock {
     }
 
     //// Non static fields and methods.
-    private final int id;
+    private final int cpuId;
     private final boolean base;
     private final boolean reserved;
     boolean bound = false;
     Thread assignedThread;
 
-    AffinityLock(int id, boolean base, boolean reserved) {
-        this.id = id;
+    AffinityLock(int cpuId, boolean base, boolean reserved) {
+        this.cpuId = cpuId;
         this.base = base;
         this.reserved = reserved;
     }
@@ -250,13 +258,13 @@ public class AffinityLock {
      */
     public void bind(boolean wholeCore) {
         if (bound && assignedThread != null && assignedThread.isAlive())
-            throw new IllegalStateException("cpu " + id + " already bound to " + assignedThread);
+            throw new IllegalStateException("cpu " + cpuId + " already bound to " + assignedThread);
 
         if (wholeCore) {
-            int core = coreForId(id);
+            int core = coreForId(cpuId);
             for (AffinityLock al : CORES.get(core)) {
                 if (bound && al.assignedThread != null && al.assignedThread.isAlive()) {
-                    LOGGER.severe("cpu " + al.id + " already bound to " + al.assignedThread);
+                    LOGGER.severe("cpu " + al.cpuId + " already bound to " + al.assignedThread);
                 } else {
                     al.bound = true;
                     al.assignedThread = Thread.currentThread();
@@ -266,7 +274,7 @@ public class AffinityLock {
                 StringBuilder sb = new StringBuilder().append("Assigning core ").append(core);
                 String sep = ": cpus ";
                 for (AffinityLock al : CORES.get(core)) {
-                    sb.append(sep).append(al.id);
+                    sb.append(sep).append(al.cpuId);
                     sep = ", ";
                 }
                 sb.append(" to ").append(assignedThread);
@@ -276,10 +284,10 @@ public class AffinityLock {
             bound = true;
             assignedThread = Thread.currentThread();
             if (LOGGER.isLoggable(Level.INFO))
-                LOGGER.info("Assigning cpu " + id + " to " + assignedThread);
+                LOGGER.info("Assigning cpu " + cpuId + " to " + assignedThread);
         }
-        if (id >= 0)
-            AffinitySupport.setAffinity(1L << id);
+        if (cpuId >= 0)
+            AffinitySupport.setAffinity(1L << cpuId);
     }
 
     private boolean canReserve() {
@@ -301,7 +309,7 @@ public class AffinityLock {
      * @return A matching AffinityLock.
      */
     public AffinityLock acquireLock(AffinityStrategy... strategies) {
-        return acquireLock(false, id, strategies);
+        return acquireLock(false, cpuId, strategies);
     }
 
     /**
@@ -314,11 +322,11 @@ public class AffinityLock {
                 Thread at = al.assignedThread;
                 if (at == t) {
                     if (LOGGER.isLoggable(Level.INFO))
-                        LOGGER.info("Releasing cpu " + al.id + " from " + t);
+                        LOGGER.info("Releasing cpu " + al.cpuId + " from " + t);
                     al.assignedThread = null;
                     al.bound = false;
                 } else if (at != null && !at.isAlive()) {
-                    LOGGER.warning("Releasing cpu " + al.id + " from " + t + " as it is not alive.");
+                    LOGGER.warning("Releasing cpu " + al.cpuId + " from " + t + " as it is not alive.");
                     al.assignedThread = null;
                     al.bound = false;
                 }

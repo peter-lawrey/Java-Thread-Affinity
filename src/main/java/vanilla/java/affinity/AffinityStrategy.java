@@ -23,7 +23,7 @@ package vanilla.java.affinity;
  */
 public interface AffinityStrategy {
     /**
-     * @param cpuId  to cpudId to compare
+     * @param cpuId  to cpuId to compare
      * @param cpuId2 with a second cpuId
      * @return true if it matches the criteria.
      */
