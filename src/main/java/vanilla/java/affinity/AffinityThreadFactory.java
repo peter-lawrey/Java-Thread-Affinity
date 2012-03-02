@@ -51,7 +51,8 @@ public class AffinityThreadFactory implements ThreadFactory {
             public void run() {
                 AffinityLock al = lastAffinityLock == null ? AffinityLock.acquireLock() : lastAffinityLock.acquireLock(strategies);
                 try {
-                    lastAffinityLock = al;
+                    if (al.cpuId() >= 0)
+                        lastAffinityLock = al;
                     r.run();
                 } finally {
                     al.release();

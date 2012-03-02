@@ -167,7 +167,7 @@ public class AffinityLock {
                 // if you have only one core, this library is not appropriate in any case.
                 for (int i = PROCESSORS - 1; i > 0; i--) {
                     AffinityLock al = LOCKS[i];
-                    if (al.canReserve() && strategy.matches(cpuId, al.cpuId)) {
+                    if (al.canReserve() && (cpuId < 0 || strategy.matches(cpuId, al.cpuId))) {
                         al.assignCurrentThread(bind, false);
                         return al;
                     }
