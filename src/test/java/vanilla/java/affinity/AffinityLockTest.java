@@ -20,6 +20,8 @@ import org.junit.Test;
 import vanilla.java.affinity.impl.VanillaCpuLayout;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
@@ -140,6 +142,21 @@ public class AffinityLockTest {
         al.release();
         alForAnotherThread.release();
         alForAnotherThread2.release();
+    }
+
+    @Test
+    public void testIssue19() {
+        AffinityLock al = AffinityLock.acquireLock();
+        List<AffinityLock> locks = new ArrayList<AffinityLock>();
+        locks.add(al);
+        for (int i = 0; i < 256; i++)
+            locks.add(al = al.acquireLock(AffinityStrategies.DIFFERENT_SOCKET,
+                    AffinityStrategies.DIFFERENT_CORE,
+                    AffinityStrategies.SAME_SOCKET,
+                    AffinityStrategies.ANY));
+        for (AffinityLock lock : locks) {
+            lock.release();
+        }
     }
 
 }
