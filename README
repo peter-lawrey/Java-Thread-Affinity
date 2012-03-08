@@ -4,6 +4,8 @@ https://www.ohloh.net/p/Java-Thread-Affinity
 
 [ Version History ]
 
+Version 1.6 - First formal release available under https://github.com/peter-lawrey/Java-Thread-Affinity/tree/master/repository
+
 Version 1.5.5 - Added native support for Linux/amd64, thank you akerbos.
 
 Version 1.5.4 - Added native support extracted from JAR and native build for Linux/i386, thank you isopov.
