@@ -16,6 +16,8 @@
 
 package vanilla.java.affinity.impl;
 
+import vanilla.java.affinity.IAffinity;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -29,8 +31,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import vanilla.java.affinity.IAffinity;
 
 /**
  * @author peter.lawrey
@@ -66,7 +66,7 @@ public enum NativeAffinity implements IAffinity {
 
     /**
      * Computes the MD5 value of the input stream
-     * 
+     *
      * @param input
      * @return
      * @throws IOException
@@ -80,7 +80,7 @@ public enum NativeAffinity implements IAffinity {
                     .getInstance("MD5");
             DigestInputStream digestInputStream = new DigestInputStream(in,
                     digest);
-            for (; digestInputStream.read() >= 0;) {
+            for (; digestInputStream.read() >= 0; ) {
 
             }
             ByteArrayOutputStream md5out = new ByteArrayOutputStream();
@@ -96,7 +96,7 @@ public enum NativeAffinity implements IAffinity {
 
     /**
      * Extract the specified library file to the target folder
-     * 
+     *
      * @param libFolderForCurrentOS
      * @param libraryFileName
      * @param targetFolder
@@ -148,8 +148,8 @@ public enum NativeAffinity implements IAffinity {
             if (!System.getProperty("os.name").contains("Windows")) {
                 try {
                     Runtime.getRuntime()
-                            .exec(new String[] { "chmod", "755",
-                                    extractedLibFile.getAbsolutePath() })
+                            .exec(new String[]{"chmod", "755",
+                                    extractedLibFile.getAbsolutePath()})
                             .waitFor();
                 } catch (Throwable e) {
                 }
@@ -168,17 +168,18 @@ public enum NativeAffinity implements IAffinity {
     }
 
     private static synchronized boolean loadNativeLibrary(String path,
-            String name) {
+                                                          String name) {
         File libPath = new File(path, name);
-        if (libPath.exists()) {
 
+        if (libPath.exists()) {
+            String absolutePath = libPath.getAbsolutePath();
             try {
-                System.load(libPath.getAbsolutePath());
+                System.load(absolutePath);
                 return true;
             } catch (UnsatisfiedLinkError e) {
                 // TODO something with e
                 if (LOGGER.isLoggable(Level.INFO)) {
-                    LOGGER.info("Unable to find libaffinity in " + path);
+                    LOGGER.info("Unable to find " + absolutePath + " in " + path + " " + e.getMessage());
                 }
                 return false;
             }

@@ -18,8 +18,19 @@ package vanilla.java.affinity.impl;
 
 import vanilla.java.affinity.CpuLayout;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import static java.lang.Integer.parseInt;
 
@@ -28,6 +39,7 @@ import static java.lang.Integer.parseInt;
  */
 public class VanillaCpuLayout implements CpuLayout {
     public static final int MAX_CPUS_SUPPORTED = 64;
+
     private final List<CpuInfo> cpuDetails;
     private final int sockets;
     private final int coresPerSocket;
@@ -175,6 +187,30 @@ public class VanillaCpuLayout implements CpuLayout {
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        VanillaCpuLayout that = (VanillaCpuLayout) o;
+
+        if (coresPerSocket != that.coresPerSocket) return false;
+        if (sockets != that.sockets) return false;
+        if (threadsPerCore != that.threadsPerCore) return false;
+        if (!cpuDetails.equals(that.cpuDetails)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = cpuDetails.hashCode();
+        result = 31 * result + sockets;
+        result = 31 * result + coresPerSocket;
+        result = 31 * result + threadsPerCore;
+        return result;
+    }
+
     static class CpuInfo {
         int socketId, coreId, threadId;
 
@@ -194,6 +230,28 @@ public class VanillaCpuLayout implements CpuLayout {
                     ", coreId=" + coreId +
                     ", threadId=" + threadId +
                     '}';
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            CpuInfo cpuInfo = (CpuInfo) o;
+
+            if (coreId != cpuInfo.coreId) return false;
+            if (socketId != cpuInfo.socketId) return false;
+            if (threadId != cpuInfo.threadId) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = socketId;
+            result = 31 * result + coreId;
+            result = 31 * result + threadId;
+            return result;
         }
     }
 }
