@@ -82,7 +82,8 @@ public class AffinityLock {
             for (int i = 0; i < cpuLayout.cpus(); i++) {
                 boolean base1 = ((BASE_AFFINITY >> i) & 1) != 0;
                 boolean reservable1 = ((RESERVED_AFFINITY >> i) & 1) != 0;
-                LOGGER.log(Level.INFO, "cpu " + i + " base= " + base1 + " reservable= " + reservable1);
+                if (LOGGER.isLoggable(Level.FINE))
+                    LOGGER.fine("cpu " + i + " base= " + base1 + " reservable= " + reservable1);
                 AffinityLock al = LOCKS[i] = new AffinityLock(i, base1, reservable1);
                 final int layoutId = al.cpuId;
                 int logicalCpuId = coreForId(layoutId);
