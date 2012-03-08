@@ -297,7 +297,7 @@ public class AffinityLock {
                 sb.append(" to ").append(assignedThread);
                 LOGGER.info(sb.toString());
             }
-        } else {
+        } else if (cpuId >= 0) {
             bound = true;
             assignedThread = Thread.currentThread();
             if (LOGGER.isLoggable(Level.INFO))
