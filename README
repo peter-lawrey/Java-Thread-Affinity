@@ -4,6 +4,10 @@ https://www.ohloh.net/p/Java-Thread-Affinity
 
 [ Version History ]
 
+Version 1.5.5 - Added native support for Linux/amd64, thank you akerbos.
+
+Version 1.5.4 - Added native support extracted from JAR and native build for Linux/i386, thank you isopov.
+
 Version 1.5.3 - Build on Windows cleanly. Added a Unix profile for Unix enhanced build.
 
 Version 1.5.2 - Added Windows support and Javadoc for all public methods.
