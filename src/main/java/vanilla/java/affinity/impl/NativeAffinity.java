@@ -145,7 +145,7 @@ public enum NativeAffinity implements IAffinity {
             writer.close();
             reader.close();
 
-            if (!System.getProperty("os.name").contains("Windows")) {
+            if (!isWindows()) {
                 try {
                     Runtime.getRuntime()
                             .exec(new String[]{"chmod", "755",
@@ -165,6 +165,10 @@ public enum NativeAffinity implements IAffinity {
         }
         return loadNativeLibrary(targetFolder, extractedLibFileName);
 
+    }
+
+    public static boolean isWindows() {
+        return System.getProperty("os.name").contains("Windows");
     }
 
     private static synchronized boolean loadNativeLibrary(String path,

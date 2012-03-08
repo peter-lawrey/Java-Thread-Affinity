@@ -16,7 +16,6 @@
 
 package vanilla.java.affinity;
 
-import com.sun.jna.Platform;
 import vanilla.java.affinity.impl.NativeAffinity;
 import vanilla.java.affinity.impl.NullAffinity;
 import vanilla.java.affinity.impl.PosixJNAAffinity;
@@ -34,19 +33,20 @@ public enum AffinitySupport {
     private static final IAffinity AFFINITY_IMPL;
 
     private static final Logger LOGGER = Logger.getLogger(AffinitySupport.class.getName());
+    private static Boolean JNAAvailable;
 
     static {
         if (NativeAffinity.LOADED) {
             LOGGER.fine("Using JNI-based affinity control implementation");
             AFFINITY_IMPL = NativeAffinity.INSTANCE;
-        } else if (Platform.isWindows() && WindowsJNAAffinity.LOADED) {
+        } else if (NativeAffinity.isWindows() && isJNAAvailable() && WindowsJNAAffinity.LOADED) {
             LOGGER.fine("Using Windows JNA-based affinity control implementation");
             AFFINITY_IMPL = WindowsJNAAffinity.INSTANCE;
-        } else if (PosixJNAAffinity.LOADED) {
+        } else if (isJNAAvailable() && PosixJNAAffinity.LOADED) {
             LOGGER.fine("Using Posix JNA-based affinity control implementation");
             AFFINITY_IMPL = PosixJNAAffinity.INSTANCE;
         } else {
-            LOGGER.info("Using dummy affinity control implementation!");
+            LOGGER.info("Using dummy affinity control implementation");
             AFFINITY_IMPL = NullAffinity.INSTANCE;
         }
     }
@@ -57,5 +57,16 @@ public enum AffinitySupport {
 
     public static void setAffinity(final long affinity) {
         AFFINITY_IMPL.setAffinity(affinity);
+    }
+
+    public static boolean isJNAAvailable() {
+        if (JNAAvailable == null)
+            try {
+                Class.forName("com.sun.jna.Platform");
+                JNAAvailable = true;
+            } catch (ClassNotFoundException ignored) {
+                JNAAvailable = false;
+            }
+        return JNAAvailable;
     }
 }
