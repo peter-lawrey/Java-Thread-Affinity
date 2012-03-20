@@ -4,6 +4,8 @@ https://www.ohloh.net/p/Java-Thread-Affinity
 
 [ Version History ]
 
+Version 1.6.2 - Initial implementation for Mac OS for its thread policies. This is not the same as affinity but may be equivalent.
+
 Version 1.6.1 - Improved behaviour on machines without thread affinity support esp. Macs.
 
 Version 1.6 - First formal release available under https://github.com/peter-lawrey/Java-Thread-Affinity/tree/master/repository
