@@ -19,6 +19,7 @@ package vanilla.java.affinity;
 import org.junit.Test;
 import vanilla.java.affinity.impl.VanillaCpuLayout;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -114,6 +115,9 @@ public class AffinityLockTest {
         if (AffinityLock.RESERVED_AFFINITY == 0) {
             System.out.println("Cannot run affinity test as no threads gave been reserved.");
             System.out.println("Use isolcpus= in grub.conf or use -D" + AffinityLock.AFFINITY_RESERVED + "={hex mask}");
+            return;
+        } else if (!new File("/proc/cpuinfo").exists()) {
+            System.out.println("Cannot run affinity test as this system doesn't have a /proc/cpuinfo file");
             return;
         }
         AffinityLock.cpuLayout(VanillaCpuLayout.fromCpuInfo());
