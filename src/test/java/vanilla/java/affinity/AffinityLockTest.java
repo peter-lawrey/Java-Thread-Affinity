@@ -140,9 +140,12 @@ public class AffinityLockTest {
         AffinityLock al = AffinityLock.acquireLock();
         AffinityLock alForAnotherThread = al.acquireLock(AffinityStrategies.ANY);
         AffinityLock alForAnotherThread2 = al.acquireLock(AffinityStrategies.ANY);
-        assertNotSame(alForAnotherThread, alForAnotherThread2);
-        assertNotSame(alForAnotherThread.cpuId(), alForAnotherThread2.cpuId());
-
+        if (alForAnotherThread2.cpuId() < 0) {
+            System.out.println("Not enough reservable CPUs to perform this test");
+        } else {
+            assertNotSame(alForAnotherThread, alForAnotherThread2);
+            assertNotSame(alForAnotherThread.cpuId(), alForAnotherThread2.cpuId());
+        }
         al.release();
         alForAnotherThread.release();
         alForAnotherThread2.release();
