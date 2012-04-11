@@ -47,7 +47,7 @@ public class AffinityLock {
     private static AffinityLock[] LOCKS;
     private static NavigableMap<Integer, AffinityLock[]> CORES; // set by cpuLayout()
     private static final AffinityLock NONE = new AffinityLock(-1, false, false);
-    private static CpuLayout cpuLayout = new NoCpuLayout(PROCESSORS);
+    private static CpuLayout cpuLayout = null;
 
     static {
         try {
@@ -57,6 +57,7 @@ public class AffinityLock {
                 LOCKS = new AffinityLock[PROCESSORS];
                 for (int i = 0; i < PROCESSORS; i++)
                     LOCKS[i] = new AffinityLock(i, ((BASE_AFFINITY >> i) & 1) != 0, ((RESERVED_AFFINITY >> i) & 1) != 0);
+                cpuLayout(new NoCpuLayout(PROCESSORS));
             }
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Unable to load /proc/cpuinfo", e);
