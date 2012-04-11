@@ -47,7 +47,7 @@ public class AffinityLock {
     private static AffinityLock[] LOCKS;
     private static NavigableMap<Integer, AffinityLock[]> CORES; // set by cpuLayout()
     private static final AffinityLock NONE = new AffinityLock(-1, false, false);
-    private static CpuLayout cpuLayout = null;
+    private static CpuLayout cpuLayout = new NoCpuLayout(PROCESSORS);
 
     static {
         try {
@@ -55,9 +55,17 @@ public class AffinityLock {
                 cpuLayout(VanillaCpuLayout.fromCpuInfo());
             } else {
                 LOCKS = new AffinityLock[PROCESSORS];
-                for (int i = 0; i < PROCESSORS; i++)
-                    LOCKS[i] = new AffinityLock(i, ((BASE_AFFINITY >> i) & 1) != 0, ((RESERVED_AFFINITY >> i) & 1) != 0);
-                cpuLayout(new NoCpuLayout(PROCESSORS));
+                CORES = new TreeMap<Integer, AffinityLock[]>();
+                for (int i = 0; i < PROCESSORS; i++) {
+                    AffinityLock al = LOCKS[i] = new AffinityLock(i, ((BASE_AFFINITY >> i) & 1) != 0, ((RESERVED_AFFINITY >> i) & 1) != 0);
+
+                    final int layoutId = al.cpuId;
+                    int logicalCpuId = coreForId(layoutId);
+                    AffinityLock[] als = CORES.get(logicalCpuId);
+                    if (als == null)
+                        CORES.put(logicalCpuId, als = new AffinityLock[1]);
+                    als[cpuLayout.threadId(layoutId)] = al;
+                }
             }
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Unable to load /proc/cpuinfo", e);
@@ -77,6 +85,7 @@ public class AffinityLock {
             if (cpuLayout.equals(AffinityLock.cpuLayout))
                 return;
             AffinityLock.cpuLayout = cpuLayout;
+            System.out.println("Locks= " + cpuLayout.cpus());
             LOCKS = new AffinityLock[cpuLayout.cpus()];
             int threads = cpuLayout.threadsPerCore();
             CORES = new TreeMap<Integer, AffinityLock[]>();
@@ -178,7 +187,7 @@ public class AffinityLock {
             for (AffinityStrategy strategy : strategies) {
                 // consider all processors except cpu 0 which is usually used by the OS.
                 // if you have only one core, this library is not appropriate in any case.
-                for (int i = PROCESSORS - 1; i > 0; i--) {
+                for (int i = LOCKS.length - 1; i > 0; i--) {
                     AffinityLock al = LOCKS[i];
                     if (al.canReserve() && (cpuId < 0 || strategy.matches(cpuId, al.cpuId))) {
                         al.assignCurrentThread(bind, false);
