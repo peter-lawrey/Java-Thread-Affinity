@@ -36,7 +36,7 @@ public enum NativeAffinity implements IAffinity {
             System.loadLibrary("affinity");
             loaded = true;
         } catch (UnsatisfiedLinkError ule) {
-            if (LOGGER.isLoggable(Level.INFO))
+            if (LOGGER.isLoggable(Level.INFO) && System.getProperty("os.name").equalsIgnoreCase("Linux"))
                 LOGGER.info("Unable to find libaffinity in " + System.getProperty("java.library.path") + " " + ule);
             loaded = false;
         }

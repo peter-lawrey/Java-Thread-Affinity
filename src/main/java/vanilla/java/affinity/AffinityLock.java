@@ -350,7 +350,24 @@ public class AffinityLock {
         super.finalize();
     }
 
+    /**
+     * @return unique id for this CPI or -1 if not allocated.
+     */
     public int cpuId() {
         return cpuId;
+    }
+
+    /**
+     * @return Was a cpu found to bind this lock to.
+     */
+    public boolean isAllocated() {
+        return cpuId >= 0;
+    }
+
+    /**
+     * @return Has this AffinityLock been bound?
+     */
+    public boolean isBound() {
+        return bound;
     }
 }

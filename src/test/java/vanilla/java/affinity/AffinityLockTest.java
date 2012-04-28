@@ -135,14 +135,20 @@ public class AffinityLockTest {
     public void testIssue21() {
         AffinityLock al = AffinityLock.acquireLock();
         AffinityLock alForAnotherThread = al.acquireLock(AffinityStrategies.ANY);
-        AffinityLock alForAnotherThread2 = al.acquireLock(AffinityStrategies.ANY);
-        assertNotSame(alForAnotherThread, alForAnotherThread2);
-        assertNotSame(alForAnotherThread.cpuId(), alForAnotherThread2.cpuId());
+        if (Runtime.getRuntime().availableProcessors() > 2) {
+            AffinityLock alForAnotherThread2 = al.acquireLock(AffinityStrategies.ANY);
+            assertNotSame(alForAnotherThread, alForAnotherThread2);
+            assertNotSame(alForAnotherThread.cpuId(), alForAnotherThread2.cpuId());
 
-        al.release();
+            alForAnotherThread2.release();
+        } else {
+            assertNotSame(alForAnotherThread, al);
+            assertNotSame(alForAnotherThread.cpuId(), al.cpuId());
+        }
         alForAnotherThread.release();
-        alForAnotherThread2.release();
+        al.release();
     }
+
 
     @Test
     public void testIssue19() {
