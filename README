@@ -4,7 +4,17 @@ https://www.ohloh.net/p/Java-Thread-Affinity
 
 [ Version History ]
 
-Version 1.5.4 - Added AffinityLock.isAllocated() and isBound() so you can check whether a CPU could be allocated.
+Version 1.6.3 - Added AffinityLock.isAllocated() and isBound() so you can check whether a CPU could be allocated.
+
+Version 1.6.2 - Initial implementation for Mac OS for its thread policies. This is not the same as affinity but may be equivalent.
+
+Version 1.6.1 - Improved behaviour on machines without thread affinity support esp. Macs.
+
+Version 1.6 - First formal release available under https://github.com/peter-lawrey/Java-Thread-Affinity/tree/master/repository
+
+Version 1.5.5 - Added native support for Linux/amd64, thank you akerbos.
+
+Version 1.5.4 - Added native support extracted from JAR and native build for Linux/i386, thank you isopov.
 
 Version 1.5.3 - Build on Windows cleanly. Added a Unix profile for Unix enhanced build.
 
