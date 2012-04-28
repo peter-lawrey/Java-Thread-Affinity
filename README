@@ -4,6 +4,8 @@ https://www.ohloh.net/p/Java-Thread-Affinity
 
 [ Version History ]
 
+Version 1.5.4 - Added AffinityLock.isAllocated() and isBound() so you can check whether a CPU could be allocated.
+
 Version 1.5.3 - Build on Windows cleanly. Added a Unix profile for Unix enhanced build.
 
 Version 1.5.2 - Added Windows support and Javadoc for all public methods.

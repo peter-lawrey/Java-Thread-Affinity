@@ -22,7 +22,7 @@
 
     <groupId>vanilla.java</groupId>
     <artifactId>affinity</artifactId>
-    <version>1.5.3</version>
+    <version>1.5.4</version>
     <packaging>jar</packaging>
 
     <licenses>
