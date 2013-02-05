@@ -22,7 +22,7 @@
 
     <groupId>com.higherfrequencytrading</groupId>
     <artifactId>affinity</artifactId>
-    <version>1.7-SNAPSHOT</version>
+    <version>1.7</version>
     <packaging>jar</packaging>
     <name>Java Thread Affinity</name>
     <description>Thread Affinity library for Java</description>
