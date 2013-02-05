@@ -27,17 +27,17 @@ endif
 
 all: $(TARGET)
 
-$(TARGET): vanilla_java_affinity_impl_NativeAffinity.c $(WORKING_DIR)/vanilla_java_affinity_impl_NativeAffinity.h $(WORKING_DIR)/vanilla_java_clock_impl_JNIClock.h $(WORKING_DIR)/vanilla_java_busywaiting_impl_BusyWaiting.h
-	gcc -O2 -shared -fPIC $(JVM_SHARED_LIBS) -ljvm -lrt $(INCLUDES) vanilla_java_affinity_impl_NativeAffinity.c -o $(TARGET)
+$(TARGET): com_higherfrequencytrading_affinity_impl_NativeAffinity.c $(WORKING_DIR)/com_higherfrequencytrading_affinity_impl_NativeAffinity.h $(WORKING_DIR)/com_higherfrequencytrading_clock_impl_JNIClock.h $(WORKING_DIR)/com_higherfrequencytrading_busywaiting_impl_BusyWaiting.h
+	gcc -O2 -shared -fPIC $(JVM_SHARED_LIBS) -ljvm -lrt $(INCLUDES) com_higherfrequencytrading_affinity_impl_NativeAffinity.c -o $(TARGET)
 
-$(WORKING_DIR)/vanilla_java_affinity_impl_NativeAffinity.h: $(TARGET_DIR)/vanilla/java/affinity/impl/NativeAffinity.class
+$(WORKING_DIR)/com_higherfrequencytrading_affinity_impl_NativeAffinity.h: $(TARGET_DIR)/com/higherfrequencytrading/affinity/impl/NativeAffinity.class
 	mkdir -p $(TARGET_DIR)/jni
-	javah -force -classpath $(JAVAH_CLASSPATH) -d $(WORKING_DIR) vanilla.java.affinity.impl.NativeAffinity
+	javah -force -classpath $(JAVAH_CLASSPATH) -d $(WORKING_DIR) com.higherfrequencytrading.affinity.impl.NativeAffinity
 
-$(WORKING_DIR)/vanilla_java_clock_impl_JNIClock.h: $(TARGET_DIR)/vanilla/java/clock/impl/JNIClock.class
+$(WORKING_DIR)/com_higherfrequencytrading_clock_impl_JNIClock.h: $(TARGET_DIR)/com/higherfrequencytrading/clock/impl/JNIClock.class
 	mkdir -p $(TARGET_DIR)/jni
-	javah -force -classpath $(JAVAH_CLASSPATH) -d $(WORKING_DIR) vanilla.java.clock.impl.JNIClock
+	javah -force -classpath $(JAVAH_CLASSPATH) -d $(WORKING_DIR) com.higherfrequencytrading.clock.impl.JNIClock
 
-$(WORKING_DIR)/vanilla_java_busywaiting_impl_BusyWaiting.h: $(TARGET_DIR)/vanilla/java/busywaiting/impl/JNIBusyWaiting.class
+$(WORKING_DIR)/com_higherfrequencytrading_busywaiting_impl_BusyWaiting.h: $(TARGET_DIR)/com/higherfrequencytrading/busywaiting/impl/JNIBusyWaiting.class
 	mkdir -p $(TARGET_DIR)/jni
-	javah -force -classpath $(JAVAH_CLASSPATH) -d $(WORKING_DIR) vanilla.java.busywaiting.impl.JNIBusyWaiting
+	javah -force -classpath $(JAVAH_CLASSPATH) -d $(WORKING_DIR) com.higherfrequencytrading.busywaiting.impl.JNIBusyWaiting
