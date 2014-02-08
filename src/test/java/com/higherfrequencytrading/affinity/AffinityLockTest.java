@@ -136,7 +136,9 @@ public class AffinityLockTest {
     }
 
     @Test
-    public void testIssue21() {
+    public void testIssue21() throws IOException {
+        AffinityLock.cpuLayout(VanillaCpuLayout.fromCpuInfo());
+
         AffinityLock al = AffinityLock.acquireLock();
         AffinityLock alForAnotherThread = al.acquireLock(AffinityStrategies.ANY);
         if (Runtime.getRuntime().availableProcessors() > 2) {
