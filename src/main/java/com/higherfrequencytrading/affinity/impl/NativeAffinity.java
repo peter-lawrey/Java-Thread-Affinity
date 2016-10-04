@@ -193,7 +193,7 @@ public enum NativeAffinity implements IAffinity {
         String affinityNativeLibraryName = System.mapLibraryName("affinity");
 
         // Load the os-dependent library from a jar file
-        String affinityNativeLibraryPath = "/com/higherfrequencytrading/java/affinity/native/"
+        String affinityNativeLibraryPath = "/com/higherfrequencytrading/affinity/native/"
                 + getNativeLibFolderPathForCurrentOS();
 
         if (NativeAffinity.class.getResource(affinityNativeLibraryPath
