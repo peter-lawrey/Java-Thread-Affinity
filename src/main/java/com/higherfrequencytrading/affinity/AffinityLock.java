@@ -74,7 +74,7 @@ public class AffinityLock {
 
     /**
      * Set the CPU layout for this machine.  CPUs which are not mentioned will be ignored.
-     * <p/>
+     *
      * Changing the layout will have no impact on thread which have already been assigned.
      * It only affects subsequent assignments.
      *
@@ -107,7 +107,7 @@ public class AffinityLock {
 
     /**
      * Translate a layout id into a logical cpu id.
-     * <p/>
+     *
      * This translation is perform so that regardless of how
      *
      * @param id
@@ -149,7 +149,7 @@ public class AffinityLock {
 
     /**
      * Assign any free core to this thread.
-     * <p/>
+     *
      * In reality, only one cpu is assigned, the rest of the threads for that core are reservable so they are not used.
      *
      * @return A handle for the current AffinityLock.
@@ -160,7 +160,7 @@ public class AffinityLock {
 
     /**
      * Assign a cpu which can be bound to the current thread or another thread.
-     * <p/>
+     *
      * This can be used for defining your thread layout centrally and passing the handle via dependency injection.
      *
      * @param bind if true, bind the current thread, if false, reserve a cpu which can be bound later.
@@ -172,7 +172,7 @@ public class AffinityLock {
 
     /**
      * Assign a core(and all its cpus) which can be bound to the current thread or another thread.
-     * <p/>
+     *
      * This can be used for defining your thread layout centrally and passing the handle via dependency injection.
      *
      * @param bind if true, bind the current thread, if false, reserve a cpu which can be bound later.
@@ -329,7 +329,7 @@ public class AffinityLock {
 
     /**
      * Give another affinity lock relative to this one based on a list of strategies.
-     * <p/>
+     *
      * The strategies are evaluated in order to (like a search path) to find the next appropriate thread.
      * If ANY is not the last strategy, a warning is logged and no cpu is assigned (leaving the OS to choose)
      *
