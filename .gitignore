@@ -5,3 +5,5 @@ affinity.ipr
 target/
 
 affinity.iws
+
+.DS_Store
