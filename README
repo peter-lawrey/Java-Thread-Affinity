@@ -1,8 +1,15 @@
+This is an old version of this library kept here for historical purposes. The latest version is available here
+
+https://github.com/OpenHFT/Java-Thread-Affinity
+
+----
+
 [ Project Development Summary ]
 
 https://www.ohloh.net/p/Java-Thread-Affinity
 
 [ Version History ]
+Verions 3.x - moved to https://github.com/OpenHFT/Java-Thread-Affinity
 
 Version 1.6.3 - Added AffinityLock.isAllocated() and isBound() so you can check whether a CPU could be allocated.
 
